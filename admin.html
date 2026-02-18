@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Country Farm Matugga</title>
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #1a202c; }
+
+        .admin-container { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #1a202c;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .sidebar-header svg { flex-shrink: 0; }
+        .sidebar-header h1 { font-size: 1rem; color: #d4af37; }
+        .sidebar-header p { font-size: 0.75rem; color: #718096; }
+        .menu-section { padding: 1rem 0; }
+        .menu-label { padding: 0 1.5rem; font-size: 0.72rem; text-transform: uppercase; color: #718096; margin-bottom: 0.4rem; font-weight: 600; letter-spacing: 0.5px; }
+        .menu-item {
+            padding: 0.85rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #cbd5e0;
+            font-size: 0.9rem;
+        }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .menu-item.active { background: #2d5016; color: white; border-left: 3px solid #d4af37; }
+
+        /* Main */
+        .main-content { flex: 1; margin-left: 260px; padding: 2rem; min-height: 100vh; }
+        .top-header {
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .page-title { font-size: 1.6rem; color: #1a202c; font-weight: 700; }
+        .header-actions { display: flex; align-items: center; gap: 1rem; }
+        .admin-badge {
+            background: #ebf8f0;
+            color: #2d5016;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Section display */
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* Stats grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #d4af37;
+        }
+        .stat-label { color: #718096; font-size: 0.85rem; margin-bottom: 0.4rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #2d5016; }
+
+        /* Cards */
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f7fafc;
+        }
+        .card-title { font-size: 1.2rem; font-weight: 700; color: #1a202c; }
+
+        /* Buttons */
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-primary { background: #2d5016; color: white; }
+        .btn-primary:hover { background: #4a7c2d; transform: translateY(-1px); }
+        .btn-secondary { background: #d4af37; color: #1a202c; }
+        .btn-secondary:hover { background: #e8c547; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-ghost { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
+        .btn-ghost:hover { background: #edf2f7; }
+        .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2d3748; font-size: 0.9rem; }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background: #f8fafc;
+            color: #1a202c;
+        }
+        .form-control:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212,175,55,0.1); background: white; }
+        textarea.form-control { min-height: 90px; resize: vertical; }
+
+        /* Tables */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 0.9rem 1rem; background: #f7fafc; border-bottom: 2px solid #e2e8f0; font-weight: 600; color: #2d3748; font-size: 0.88rem; }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
+        tr:hover { background: #f7fafc; }
+
+        /* Video Manager */
+        .video-list { display: flex; flex-direction: column; gap: 1rem; }
+        .video-item {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .video-number {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #2d5016, #4a7c2d);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .video-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 700px) {
+            .video-fields { grid-template-columns: 1fr; }
+            .video-item { grid-template-columns: auto 1fr; }
+            .video-item-actions { grid-column: 1 / -1; }
+        }
+        .video-fields label { font-size: 0.8rem; font-weight: 600; color: #4a5568; display: block; margin-bottom: 0.3rem; }
+        .video-fields input, .video-fields textarea, .video-fields select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            color: #1a202c;
+            transition: border-color 0.2s;
+        }
+        .video-fields input:focus, .video-fields textarea:focus, .video-fields select:focus {
+            outline: none; border-color: #d4af37;
+        }
+        .video-fields .full-width { grid-column: 1 / -1; }
+        .video-status {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem; font-weight: 600;
+        }
+        .video-status.has-video { background: #d1fae5; color: #065f46; }
+        .video-status.no-video { background: #fef3c7; color: #92400e; }
+
+        /* Settings */
+        .settings-section {
+            background: #f7fafc;
+            border-left: 4px solid #d4af37;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .settings-title {
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 16px;
+            max-width: 700px; width: 100%;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { font-size: 1.3rem; color: #1a202c; }
+        .modal-close { background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .modal-body { padding: 2rem; }
+
+        /* Badge */
+        .badge { padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #2d5016; color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none; align-items: center; gap: 0.5rem;
+            animation: slideIn 0.3s;
+        }
+        .toast.active { display: flex; }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(300px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar-header h1, .sidebar-header p, .menu-label, .menu-item span { display: none; }
+            .sidebar-header { justify-content: center; padding: 1rem; }
+            .main-content { margin-left: 60px; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="Logo.png" alt="Country Farm Matugga" style="height:44px;width:auto;flex-shrink:0;">
+            <div>
+                <h1>Admin Panel</h1>
+                <p>Country Farm</p>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Overview</div>
+            <div class="menu-item active" data-section="dashboard">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Business</div>
+            <div class="menu-item" data-section="quotes">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>Quotations</span>
+            </div>
+            <div class="menu-item" data-section="orders">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span>Orders</span>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Website</div>
+            <div class="menu-item" data-section="content">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span>Content</span>
+            </div>
+            <div class="menu-item" data-section="products">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                <span>Products</span>
+            </div>
+            <div class="menu-item" data-section="videos">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                <span>Videos</span>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Settings</div>
+            <div class="menu-item" data-section="settings">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+            </div>
+            <div class="menu-item" data-section="logout" id="logoutBtn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-header">
+            <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            <div class="header-actions">
+                <div class="admin-badge">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span id="adminEmailDisplay"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfbebbb2b6b19fbcb9b2f1bcb0b2">[email&#160;protected]</a></span>
+                </div>
+                <button class="btn btn-primary" onclick="saveAllChanges()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save All Changes
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="content-section active" id="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Pending Quotes</div>
+                    <div class="stat-value" id="statQuotes">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Orders</div>
+                    <div class="stat-value" id="statOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Products</div>
+                    <div class="stat-value" id="statProducts">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Videos Published</div>
+                    <div class="stat-value" id="statVideos">0</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Recent Quote Requests</h3></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Name</th><th>Product</th><th>Qty</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="recentActivity">
+                            <tr><td colspan="5" style="text-align:center;padding:2rem;color:#718096;">No recent activity</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quotes -->
+        <div class="content-section" id="quotes">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Quote Requests</h3>
+                    <button class="btn btn-danger btn-sm" onclick="clearQuotes()">Clear All</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Product</th><th>Qty</th><th>Farm Type</th></tr>
+                        </thead>
+                        <tbody id="quotesTable">
+                            <tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No quotes yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="content-section" id="orders">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Orders</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('addOrderModal')">+ Add Order</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No orders yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Editor -->
+        <div class="content-section" id="content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Website Content</h3>
+                    <button class="btn btn-primary btn-sm" onclick="saveContent()">Save Content</button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🏠 Hero Section</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Farm Name</label>
+                            <input type="text" class="form-control" id="c_farmName" placeholder="Country Farm Matugga">
+                        </div>
+                        <div class="form-group">
+                            <label>Hero Title</label>
+                            <input type="text" class="form-control" id="c_heroTitle" placeholder="Premium Day-Old Chicks">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hero Subtitle</label>
+                        <input type="text" class="form-control" id="c_heroSubtitle">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">📊 Stats</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Years Experience</label><input type="text" class="form-control" id="c_statsYears"></div>
+                        <div class="form-group"><label>Chicks Delivered</label><input type="text" class="form-control" id="c_statsChicks"></div>
+                        <div class="form-group"><label>Survival Rate</label><input type="text" class="form-control" id="c_statsSurvival"></div>
+                        <div class="form-group"><label>Happy Farmers</label><input type="text" class="form-control" id="c_statsFarmers"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">ℹ️ About Section</div>
+                    <div class="form-group"><label>Paragraph 1</label><textarea class="form-control" id="c_aboutPara1"></textarea></div>
+                    <div class="form-group"><label>Paragraph 2</label><textarea class="form-control" id="c_aboutPara2"></textarea></div>
+                    <div class="form-group"><label>Paragraph 3</label><textarea class="form-control" id="c_aboutPara3"></textarea></div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">📍 Contact Details</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Address</label><input type="text" class="form-control" id="c_contactAddress"></div>
+                        <div class="form-group"><label>Phone</label><input type="text" class="form-control" id="c_contactPhone"></div>
+                        <div class="form-group"><label>Email</label><input type="email" class="form-control" id="c_contactEmail"></div>
+                        <div class="form-group"><label>WhatsApp Number</label><input type="text" class="form-control" id="c_contactWhatsApp" placeholder="256700000000"></div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">🔗 Social Links</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Facebook URL</label><input type="url" class="form-control" id="c_socialFacebook"></div>
+                        <div class="form-group"><label>Instagram URL</label><input type="url" class="form-control" id="c_socialInstagram"></div>
+                        <div class="form-group"><label>Twitter/X URL</label><input type="url" class="form-control" id="c_socialTwitter"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="content-section" id="products">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Product Management</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('addProductModal')">+ Add Product</button>
+                </div>
+                <div id="productsList"></div>
+            </div>
+        </div>
+
+        <!-- ===== VIDEOS ===== -->
+        <div class="content-section" id="videos">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🎬 Video Management</h3>
+                    <div style="display:flex;gap:0.5rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="saveVideos()">Save Videos</button>
+                        <button class="btn btn-ghost btn-sm" onclick="resetVideos()">Reset</button>
+                    </div>
+                </div>
+                <p style="color:#718096;font-size:0.9rem;margin-bottom:1.5rem;">
+                    Manage the three video slots displayed on the website. Paste a publicly accessible MP4 URL or a direct link to your hosted video file.
+                </p>
+                <div class="video-list" id="videosList">
+                    <!-- Rendered by JS -->
+                </div>
+                <div style="margin-top:1.5rem;padding:1rem;background:#f0f9f4;border-radius:8px;font-size:0.85rem;color:#2d5016;">
+                    <strong>💡 Tip:</strong> Upload your video files to Google Drive, Dropbox, or your web server and paste the direct MP4 URL here. Videos are lazy-loaded on the website for fast page speed.
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="content-section" id="settings">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Admin Account Settings</h3>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Update Admin Email
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Current Email</label>
+                            <input type="email" class="form-control" id="currentEmailDisplay" readonly style="background:#f0f0f0;">
+                        </div>
+                        <div class="form-group">
+                            <label>New Email Address</label>
+                            <input type="email" class="form-control" id="newAdminEmail" placeholder="new@email.com">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="updateEmail()">Update Email</button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Change Password
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Current password">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" class="form-control" id="newPassword" placeholder="New password (min. 8 chars)">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="updatePassword()">Update Password</button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title" style="color:#991b1b;">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Danger Zone
+                    </div>
+                    <p style="font-size:0.9rem;color:#718096;margin-bottom:1rem;">Clear all locally stored data. This will remove all quotes, orders, products and content from this browser.</p>
+                    <button class="btn btn-danger btn-sm" onclick="if(confirm('Clear ALL data? This cannot be undone.')) clearAllData()">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /admin-container -->
+
+<!-- Add Product Modal -->
+<div class="modal" id="addProductModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add / Edit Product</h2>
+            <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editProductId">
+            <div class="form-group"><label>Product Name</label><input type="text" class="form-control" id="pName"></div>
+            <div class="form-group"><label>Description</label><textarea class="form-control" id="pDesc"></textarea></div>
+            <div class="form-group"><label>Price (UGX)</label><input type="number" class="form-control" id="pPrice"></div>
+            <div class="form-group"><label>Image URL</label><input type="url" class="form-control" id="pImage"></div>
+            <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Order Modal -->
+<div class="modal" id="addOrderModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Order</h2>
+            <button class="modal-close" onclick="closeModal('addOrderModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group"><label>Customer Name</label><input type="text" class="form-control" id="oName"></div>
+                <div class="form-group"><label>Product</label><input type="text" class="form-control" id="oProduct"></div>
+                <div class="form-group"><label>Quantity</label><input type="number" class="form-control" id="oQty"></div>
+                <div class="form-group"><label>Amount (UGX)</label><input type="number" class="form-control" id="oAmount"></div>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" id="oStatus">
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="saveOrder()">Save Order</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMessage"></span>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ===== AUTH CHECK =====
+    (function() {
+        const auth = sessionStorage.getItem('adminAuth');
+        if (!auth) {
+            window.location.href = 'admin-login.html';
+        }
+    })();
+
+    // ===== HELPERS =====
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.className = `toast ${type} active`;
+        document.getElementById('toastMessage').textContent = message;
+        setTimeout(() => toast.classList.remove('active'), 3500);
+    }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function saveAllChanges() { saveContent(); saveVideos(); showToast('All changes saved!', 'success'); }
+
+    // ===== NAVIGATION =====
+    const sectionTitles = {
+        dashboard: 'Dashboard', quotes: 'Quote Requests', orders: 'Orders',
+        content: 'Website Content', products: 'Product Management',
+        videos: 'Video Management', settings: 'Account Settings'
+    };
+    document.querySelectorAll('.menu-item[data-section]').forEach(item => {
+        item.addEventListener('click', function() {
+            const sec = this.dataset.section;
+            if (sec === 'logout') { logout(); return; }
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(sec);
+            if (target) target.classList.add('active');
+            document.getElementById('pageTitle').textContent = sectionTitles[sec] || 'Dashboard';
+            if (sec === 'videos') renderVideoEditor();
+            if (sec === 'products') renderProductsList();
+            if (sec === 'quotes') renderQuotes();
+            if (sec === 'orders') renderOrders();
+            if (sec === 'settings') {
+                document.getElementById('currentEmailDisplay').value = localStorage.getItem('adminEmail') || 'admin@cfm.com';
+            }
+        });
+    });
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            sessionStorage.removeItem('adminAuth');
+            window.location.href = 'admin-login.html';
+        }
+    }
+
+    // ===== CREDENTIALS =====
+    function updateEmail() {
+        const newEmail = document.getElementById('newAdminEmail').value.trim();
+        if (!newEmail || !newEmail.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
+        localStorage.setItem('adminEmail', newEmail);
+        document.getElementById('currentEmailDisplay').value = newEmail;
+        document.getElementById('adminEmailDisplay').textContent = newEmail;
+        document.getElementById('newAdminEmail').value = '';
+        showToast('Email updated successfully!');
+    }
+
+    function updatePassword() {
+        const current = document.getElementById('currentPassword').value;
+        const newPw = document.getElementById('newPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const stored = localStorage.getItem('adminPassword') || 'Passw0rd';
+        if (current !== stored) { showToast('Current password is incorrect', 'error'); return; }
+        if (newPw.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+        if (newPw !== confirm) { showToast('Passwords do not match', 'error'); return; }
+        localStorage.setItem('adminPassword', newPw);
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        showToast('Password updated successfully!');
+    }
+
+    // ===== CONTENT =====
+    function loadContentFields() {
+        const c = JSON.parse(localStorage.getItem('websiteContent') || '{}');
+        document.getElementById('c_farmName').value = c.farmName || 'Country Farm Matugga';
+        document.getElementById('c_heroTitle').value = c.heroTitle || 'Premium Day-Old Chicks';
+        document.getElementById('c_heroSubtitle').value = c.heroSubtitle || '';
+        document.getElementById('c_statsYears').value = c.statsYears || '15+';
+        document.getElementById('c_statsChicks').value = c.statsChicks || '500K+';
+        document.getElementById('c_statsSurvival').value = c.statsSurvival || '95%';
+        document.getElementById('c_statsFarmers').value = c.statsFarmers || '2,000+';
+        document.getElementById('c_aboutPara1').value = c.aboutPara1 || '';
+        document.getElementById('c_aboutPara2').value = c.aboutPara2 || '';
+        document.getElementById('c_aboutPara3').value = c.aboutPara3 || '';
+        document.getElementById('c_contactAddress').value = c.contactAddress || 'Matugga, Uganda';
+        document.getElementById('c_contactPhone').value = c.contactPhone || '+256 700 000 000';
+        document.getElementById('c_contactEmail').value = c.contactEmail || 'info@countryfarmmatugga.com';
+        document.getElementById('c_contactWhatsApp').value = c.contactWhatsApp || '256700000000';
+        document.getElementById('c_socialFacebook').value = c.socialFacebook || '';
+        document.getElementById('c_socialInstagram').value = c.socialInstagram || '';
+        document.getElementById('c_socialTwitter').value = c.socialTwitter || '';
+    }
+    function saveContent() {
+        const c = {
+            farmName: document.getElementById('c_farmName').value,
+            heroTitle: document.getElementById('c_heroTitle').value,
+            heroSubtitle: document.getElementById('c_heroSubtitle').value,
+            statsYears: document.getElementById('c_statsYears').value,
+            statsChicks: document.getElementById('c_statsChicks').value,
+            statsSurvival: document.getElementById('c_statsSurvival').value,
+            statsFarmers: document.getElementById('c_statsFarmers').value,
+            aboutPara1: document.getElementById('c_aboutPara1').value,
+            aboutPara2: document.getElementById('c_aboutPara2').value,
+            aboutPara3: document.getElementById('c_aboutPara3').value,
+            contactAddress: document.getElementById('c_contactAddress').value,
+            contactPhone: document.getElementById('c_contactPhone').value,
+            contactEmail: document.getElementById('c_contactEmail').value,
+            contactWhatsApp: document.getElementById('c_contactWhatsApp').value,
+            socialFacebook: document.getElementById('c_socialFacebook').value,
+            socialInstagram: document.getElementById('c_socialInstagram').value,
+            socialTwitter: document.getElementById('c_socialTwitter').value,
+        };
+        localStorage.setItem('websiteContent', JSON.stringify(c));
+        showToast('Content saved!');
+    }
+
+    // ===== VIDEOS =====
+    const defaultVideos = [
+        { id: 1, title: 'Our Brooding House', description: 'See how we maintain ideal conditions for our day-old chicks in our state-of-the-art brooding facility.', category: 'Facility Tour', src: '', thumbnail: '' },
+        { id: 2, title: 'Chick Quality Standards', description: 'Watch our quality control process ensuring every chick meets our premium health and strength standards.', category: 'Quality Assurance', src: '', thumbnail: '' },
+        { id: 3, title: 'Farm Life at Matugga', description: 'A day in the life of our farm — from hatchery to delivery, see the care that goes into every batch.', category: 'Farm Life', src: '', thumbnail: '' }
+    ];
+    const videoCategories = ['Facility Tour','Quality Assurance','Farm Life','Breeding','Feeding','Health & Vet','Delivery','Other'];
+
+    function getVideos() {
+        return JSON.parse(localStorage.getItem('farmVideos') || 'null') || defaultVideos;
+    }
+
+    function renderVideoEditor() {
+        const videos = getVideos();
+        const container = document.getElementById('videosList');
+        container.innerHTML = videos.map((v, i) => `
+            <div class="video-item">
+                <div class="video-number">${i + 1}</div>
+                <div class="video-fields">
+                    <div>
+                        <label>Video Title *</label>
+                        <input type="text" id="vTitle_${i}" value="${v.title}" placeholder="e.g. Farm Tour 2024">
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <select id="vCategory_${i}">
+                            ${videoCategories.map(c => `<option value="${c}" ${v.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="full-width">
+                        <label>MP4 Video URL <span style="color:#718096;font-weight:400;">(direct link to .mp4 file)</span></label>
+                        <input type="url" id="vSrc_${i}" value="${v.src}" placeholder="https://example.com/video.mp4">
+                    </div>
+                    <div class="full-width">
+                        <label>Thumbnail URL <span style="color:#718096;font-weight:400;">(optional preview image)</span></label>
+                        <input type="url" id="vThumb_${i}" value="${v.thumbnail}" placeholder="https://example.com/thumb.jpg">
+                    </div>
+                    <div class="full-width">
+                        <label>Description</label>
+                        <textarea id="vDesc_${i}" rows="2">${v.description}</textarea>
+                    </div>
+                </div>
+                <div class="video-item-actions" style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;">
+                    <span class="video-status ${v.src ? 'has-video' : 'no-video'}">
+                        ${v.src ? '✓ Video Set' : '⚠ No Video'}
+                    </span>
+                    ${v.src ? `<a href="${v.src}" target="_blank" class="btn btn-ghost btn-sm">Preview</a>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function saveVideos() {
+        const videos = getVideos().map((v, i) => ({
+            id: v.id,
+            title: document.getElementById(`vTitle_${i}`)?.value || v.title,
+            description: document.getElementById(`vDesc_${i}`)?.value || v.description,
+            category: document.getElementById(`vCategory_${i}`)?.value || v.category,
+            src: document.getElementById(`vSrc_${i}`)?.value || v.src,
+            thumbnail: document.getElementById(`vThumb_${i}`)?.value || v.thumbnail,
+        }));
+        localStorage.setItem('farmVideos', JSON.stringify(videos));
+        const withVideo = videos.filter(v => v.src).length;
+        document.getElementById('statVideos').textContent = withVideo;
+        renderVideoEditor();
+        showToast(`Videos saved! ${withVideo}/3 have video URLs.`);
+    }
+
+    function resetVideos() {
+        if (!confirm('Reset videos to defaults?')) return;
+        localStorage.removeItem('farmVideos');
+        renderVideoEditor();
+        showToast('Videos reset to defaults');
+    }
+
+    // ===== PRODUCTS =====
+    function getProducts() {
+        return JSON.parse(localStorage.getItem('farmProducts') || 'null') || [
+            { id: 1, name: 'Broiler Day-Old Chicks', description: 'Fast-growing, high-quality broiler chicks.', price: 3500, image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=80' },
+            { id: 2, name: 'Layer Day-Old Chicks', description: 'Premium layer breeds with excellent egg production.', price: 4200, image: 'https://images.unsplash.com/photo-1612170153139-6f881ff067e0?w=400&q=80' },
+            { id: 3, name: 'Kuroiler Chicks', description: 'Dual-purpose breed for meat and eggs.', price: 5000, image: 'https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=400&q=80' }
+        ];
+    }
+    function renderProductsList() {
+        const products = getProducts();
+        const container = document.getElementById('productsList');
+        if (!products.length) { container.innerHTML = '<p style="text-align:center;color:#718096;padding:2rem;">No products. Add one above.</p>'; return; }
+        container.innerHTML = `<table><thead><tr><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr></thead><tbody>` +
+            products.map(p => `<tr>
+                <td><strong>${p.name}</strong></td>
+                <td>${p.description}</td>
+                <td>UGX ${p.price.toLocaleString()}</td>
+                <td>
+                    <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Delete</button>
+                </td>
+            </tr>`).join('') + '</tbody></table>';
+        document.getElementById('statProducts').textContent = products.length;
+    }
+    function editProduct(id) {
+        const products = getProducts();
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('editProductId').value = id;
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pDesc').value = p.description;
+        document.getElementById('pPrice').value = p.price;
+        document.getElementById('pImage').value = p.image;
+        openModal('addProductModal');
+    }
+    function saveProduct() {
+        const products = getProducts();
+        const editId = parseInt(document.getElementById('editProductId').value);
+        const newP = {
+            id: editId || Date.now(),
+            name: document.getElementById('pName').value,
+            description: document.getElementById('pDesc').value,
+            price: parseFloat(document.getElementById('pPrice').value),
+            image: document.getElementById('pImage').value,
+        };
+        if (editId) {
+            const idx = products.findIndex(x => x.id === editId);
+            if (idx !== -1) products[idx] = newP;
+        } else {
+            products.push(newP);
+        }
+        localStorage.setItem('farmProducts', JSON.stringify(products));
+        closeModal('addProductModal');
+        document.getElementById('editProductId').value = '';
+        renderProductsList();
+        showToast('Product saved!');
+    }
+    function deleteProduct(id) {
+        if (!confirm('Delete this product?')) return;
+        const products = getProducts().filter(p => p.id !== id);
+        localStorage.setItem('farmProducts', JSON.stringify(products));
+        renderProductsList();
+        showToast('Product deleted');
+    }
+
+    // ===== QUOTES =====
+    function renderQuotes() {
+        const quotes = JSON.parse(localStorage.getItem('farmQuotes') || '[]');
+        const tbody = document.getElementById('quotesTable');
+        if (!quotes.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No quotes yet</td></tr>'; return; }
+        tbody.innerHTML = quotes.map(q => `<tr>
+            <td>${new Date(q.date).toLocaleDateString()}</td>
+            <td>${q.name}</td>
+            <td>${q.email}</td>
+            <td>${q.phone}</td>
+            <td>${q.product}</td>
+            <td>${q.quantity}</td>
+            <td>${q.farmType}</td>
+        </tr>`).join('');
+        document.getElementById('statQuotes').textContent = quotes.length;
+    }
+    function clearQuotes() {
+        if (!confirm('Clear all quotes?')) return;
+        localStorage.removeItem('farmQuotes');
+        renderQuotes();
+        showToast('Quotes cleared');
+    }
+
+    // ===== ORDERS =====
+    function getOrders() { return JSON.parse(localStorage.getItem('farmOrders') || '[]'); }
+    function renderOrders() {
+        const orders = getOrders();
+        const tbody = document.getElementById('ordersTable');
+        if (!orders.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No orders yet</td></tr>'; return; }
+        tbody.innerHTML = orders.map(o => `<tr>
+            <td>${new Date(o.date).toLocaleDateString()}</td>
+            <td>${o.name}</td>
+            <td>${o.product}</td>
+            <td>${o.qty}</td>
+            <td>UGX ${parseInt(o.amount).toLocaleString()}</td>
+            <td><span class="badge ${o.status==='Delivered'?'badge-success':o.status==='Cancelled'?'badge-danger':'badge-warning'}">${o.status}</span></td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">Delete</button></td>
+        </tr>`).join('');
+        document.getElementById('statOrders').textContent = orders.length;
+    }
+    function saveOrder() {
+        const orders = getOrders();
+        orders.push({
+            id: Date.now(),
+            date: new Date().toISOString(),
+            name: document.getElementById('oName').value,
+            product: document.getElementById('oProduct').value,
+            qty: document.getElementById('oQty').value,
+            amount: document.getElementById('oAmount').value,
+            status: document.getElementById('oStatus').value,
+        });
+        localStorage.setItem('farmOrders', JSON.stringify(orders));
+        closeModal('addOrderModal');
+        renderOrders();
+        showToast('Order saved!');
+    }
+    function deleteOrder(id) {
+        if (!confirm('Delete this order?')) return;
+        const orders = getOrders().filter(o => o.id !== id);
+        localStorage.setItem('farmOrders', JSON.stringify(orders));
+        renderOrders();
+        showToast('Order deleted');
+    }
+
+    function clearAllData() {
+        ['farmQuotes','farmOrders','farmProducts','farmVideos','websiteContent'].forEach(k => localStorage.removeItem(k));
+        showToast('All data cleared');
+        loadDashboard();
+    }
+
+    // ===== DASHBOARD =====
+    function loadDashboard() {
+        const quotes = JSON.parse(localStorage.getItem('farmQuotes') || '[]');
+        const orders = JSON.parse(localStorage.getItem('farmOrders') || '[]');
+        const products = getProducts();
+        const videos = getVideos().filter(v => v.src);
+        document.getElementById('statQuotes').textContent = quotes.length;
+        document.getElementById('statOrders').textContent = orders.length;
+        document.getElementById('statProducts').textContent = products.length;
+        document.getElementById('statVideos').textContent = videos.length;
+
+        // Recent activity (latest 5 quotes)
+        const tbody = document.getElementById('recentActivity');
+        const recent = quotes.slice(-5).reverse();
+        tbody.innerHTML = recent.length ? recent.map(q => `<tr>
+            <td>${new Date(q.date).toLocaleDateString()}</td>
+            <td>${q.name}</td>
+            <td>${q.product}</td>
+            <td>${q.quantity}</td>
+            <td><button class="btn btn-ghost btn-sm">View</button></td>
+        </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#718096;">No activity yet</td></tr>';
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', () => {
+        const email = localStorage.getItem('

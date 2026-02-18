@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Country Farm Matugga - Uganda's premier supplier of premium day-old chicks, broilers, layers, and poultry products">
+    <meta name="keywords" content="day-old chicks, poultry farm, broiler chicks, layer chicks, Uganda, Matugga">
+    <title>Country Farm Matugga - Premium Poultry & Day-Old Chicks</title>
+    
+    <!-- Favicon (inline SVG as data URI) -->
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="shortcut icon" href="Logo.png">
+    <link rel="apple-touch-icon" sizes="256x256" href="logo.svg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #2d5016;
+            --light-green: #4a7c2d;
+            --accent-gold: #d4af37;
+            --light-gold: #f4d75e;
+            --bg-light: #fafaf8;
+            --bg-dark: #1a1a1a;
+            --text-light: #2d2d2d;
+            --text-dark: #e8e8e8;
+            --card-light: #ffffff;
+            --card-dark: #2a2a2a;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background: var(--bg-dark); color: var(--text-dark); }
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.from-left {
+            transform: translateX(-50px);
+        }
+        .reveal.from-right {
+            transform: translateX(50px);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        @media (prefers-color-scheme: dark) {
+            nav { background: rgba(26, 26, 26, 0.98); }
+        }
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+        .logo-img {
+            height: 54px;
+            width: auto;
+        }
+        @media (prefers-color-scheme: dark) { .logo { color: var(--accent-gold); } }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        @media (prefers-color-scheme: dark) { .nav-links a { color: var(--text-dark); } }
+        .nav-links a:hover { color: var(--accent-gold); }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary { background: var(--primary-green); color: white; }
+        .btn-primary:hover { background: var(--light-green); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45,80,22,0.3); }
+        .btn-secondary { background: var(--accent-gold); color: var(--primary-green); }
+        .btn-secondary:hover { background: var(--light-gold); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary-green); color: var(--primary-green); }
+        .btn-outline:hover { background: var(--primary-green); color: white; }
+
+        .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0; right: -100%;
+            width: 280px; height: 100vh;
+            background: var(--card-light);
+            z-index: 1001;
+            padding: 5rem 2rem 2rem;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+        }
+        @media (prefers-color-scheme: dark) { .mobile-nav { background: var(--card-dark); } }
+        .mobile-nav.active { right: 0; }
+        .mobile-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .mobile-overlay.active { display: block; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(45,80,22,0.85), rgba(74,124,45,0.78)),
+                        url('https://images.unsplash.com/photo-1612170153139-6f881ff067e0?w=1600&q=80') center/cover fixed;
+            position: relative;
+            color: white;
+            text-align: center;
+            padding: 8rem 5% 4rem;
+        }
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease;
+        }
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Section */
+        section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-green);
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+        }
+        @media (prefers-color-scheme: dark) { .section-title { color: var(--accent-gold); } }
+        .section-subtitle { font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto; }
+
+        /* Grid */
+        .grid { display: grid; gap: 2rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+        /* Card */
+        .card {
+            background: var(--card-light);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        @media (prefers-color-scheme: dark) { .card { background: var(--card-dark); } }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .card-icon {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--light-gold));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .card h3 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--primary-green); }
+        @media (prefers-color-scheme: dark) { .card h3 { color: var(--accent-gold); } }
+
+        /* Stats */
+        .stats { background: var(--primary-green); color: white; padding: 4rem 5%; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stat-value { font-size: 3.5rem; font-weight: 800; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif; }
+        .stat-label { font-size: 1.1rem; opacity: 0.9; }
+
+        /* Form */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); }
+        @media (prefers-color-scheme: dark) { .form-group label { color: var(--text-dark); } }
+        .form-control {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+        @media (prefers-color-scheme: dark) {
+            .form-control { background: var(--bg-dark); color: var(--text-dark); border-color: #444; }
+        }
+        .form-control:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.1); }
+        textarea.form-control { min-height: 120px; resize: vertical; }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--card-light);
+            border-radius: 16px;
+            max-width: 600px; width: 100%;
+            max-height: 90vh; overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        @media (prefers-color-scheme: dark) { .modal-content { background: var(--card-dark); } }
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        @media (prefers-color-scheme: dark) { .modal-header { border-bottom-color: #444; } }
+        .modal-header h2 { font-size: 1.8rem; color: var(--primary-green); font-family: 'Playfair Display', serif; }
+        @media (prefers-color-scheme: dark) { .modal-header h2 { color: var(--accent-gold); } }
+        .modal-close { background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background 0.3s; }
+        .modal-close:hover { background: rgba(0,0,0,0.05); }
+        .modal-body { padding: 2rem; }
+
+        /* Footer */
+        footer { background: var(--primary-green); color: white; padding: 4rem 5% 2rem; }
+        @media (prefers-color-scheme: dark) { footer { background: #1a1a1a; } }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+        }
+        .footer-section h3 { color: var(--accent-gold); margin-bottom: 1.5rem; font-size: 1.3rem; }
+        .footer-section p, .footer-section a {
+            opacity: 0.9; line-height: 2; color: white; text-decoration: none;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .footer-section a:hover { color: var(--accent-gold); }
+        .social-links { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social-link {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+        }
+        .social-link:hover { background: var(--accent-gold); transform: translateY(-3px); }
+        .footer-bottom {
+            text-align: center; padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--primary-green); color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 3000;
+            display: none; align-items: center; gap: 0.5rem;
+            animation: slideInRight 0.3s;
+        }
+        .toast.active { display: flex; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
+        .toast.warning { background: var(--warning); }
+        .toast.info { background: var(--info); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        /* ===== VIDEO SECTION ===== */
+        .video-section-wrapper {
+            background: linear-gradient(180deg, #f0f4ec 0%, #fafaf8 100%);
+            padding: 5rem 0;
+        }
+        @media (prefers-color-scheme: dark) {
+            .video-section-wrapper { background: linear-gradient(180deg, #1e2a1a 0%, #1a1a1a 100%); }
+        }
+        .video-section-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        @media (max-width: 900px) {
+            .videos-grid { grid-template-columns: 1fr; }
+        }
+        @media (min-width: 601px) and (max-width: 900px) {
+            .videos-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .video-card {
+            background: var(--card-light);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(45,80,22,0.12);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 2px solid transparent;
+        }
+        @media (prefers-color-scheme: dark) { .video-card { background: var(--card-dark); } }
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(45,80,22,0.22);
+            border-color: var(--accent-gold);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+        .video-wrapper video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .video-placeholder {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white; text-align: center; padding: 1rem;
+            cursor: pointer;
+        }
+        .video-placeholder-icon {
+            width: 60px; height: 60px;
+            background: rgba(212,175,55,0.3);
+            border: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .video-card:hover .video-placeholder-icon {
+            background: var(--accent-gold);
+            transform: scale(1.1);
+        }
+        .video-placeholder p { font-size: 0.9rem; opacity: 0.85; margin-top: 0.5rem; }
+
+        .video-info {
+            padding: 1.4rem 1.6rem 1.6rem;
+        }
+        .video-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .video-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        @media (prefers-color-scheme: dark) { .video-info h3 { color: var(--accent-gold); } }
+        .video-info p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+        @media (prefers-color-scheme: dark) { .video-info p { color: #aaa; } }
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .video-divider {
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--accent-gold), transparent);
+            border-radius: 2px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .logo-img { height: 42px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .section-title { font-size: 2rem; }
+            .stat-value { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <a href="/" class="logo">
+                <img src="Logo.png" alt="Country Farm Matugga" class="logo-img">
+                <span id="farmName">Country Farm Matugga</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home"><i data-lucide="home" style="width:16px;height:16px;"></i> Home</a></li>
+                <li><a href="#products"><i data-lucide="package" style="width:16px;height:16px;"></i> Products</a></li>
+                <li><a href="#videos"><i data-lucide="play-circle" style="width:16px;height:16px;"></i> Videos</a></li>
+                <li><a href="#about"><i data-lucide="info" style="width:16px;height:16px;"></i> About</a></li>
+                <li><a href="#contact"><i data-lucide="mail" style="width:16px;height:16px;"></i> Contact</a></li>
+                <li><button class="btn btn-primary" onclick="openModal('quoteModal')"><i data-lucide="file-text" style="width:16px;height:16px;"></i> Get Quote</button></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i data-lucide="menu" style="width:24px;height:24px;"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:1rem;">
+            <li><a href="#home" onclick="toggleMobileMenu()">Home</a></li>
+            <li><a href="#products" onclick="toggleMobileMenu()">Products</a></li>
+            <li><a href="#videos" onclick="toggleMobileMenu()">Videos</a></li>
+            <li><a href="#about" onclick="toggleMobileMenu()">About</a></li>
+            <li><a href="#contact" onclick="toggleMobileMenu()">Contact</a></li>
+            <li><button class="btn btn-primary" onclick="openModal('quoteModal');toggleMobileMenu()" style="width:100%;">Get Quote</button></li>
+        </ul>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 id="heroTitle">Premium Day-Old Chicks</h1>
+            <p id="heroSubtitle">Quality Poultry for Your Farm - Healthy, Strong & Productive</p>
+            <div class="hero-buttons">
+                <button class="btn btn-secondary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+                    <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i>
+                    Browse Products
+                </button>
+                <button class="btn btn-outline" onclick="openModal('quoteModal')" style="border-color:white;color:white;">
+                    <i data-lucide="calculator" style="width:18px;height:18px;"></i>
+                    Request Quote
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stats-grid">
+            <div class="reveal">
+                <div class="stat-value" id="statsYears">15+</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <div class="stat-value" id="statsChicks">500K+</div>
+                <div class="stat-label">Chicks Delivered</div>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <div class="stat-value" id="statsSurvival">95%</div>
+                <div class="stat-label">Survival Rate</div>
+            </div>
+            <div class="reveal reveal-delay-3">
+                <div class="stat-value" id="statsFarmers">2,000+</div>
+                <div class="stat-label">Happy Farmers</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <section id="products">
+        <div class="section-header reveal">
+            <h2 class="section-title">Our Products</h2>
+            <p class="section-subtitle">Premium quality chicks and poultry supplies for your farm</p>
+        </div>
+        <div class="grid grid-3" id="productsGrid">
+            <!-- Products loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- ===== VIDEO SECTION ===== -->
+    <div class="video-section-wrapper" id="videos">
+        <div class="video-section-inner">
+            <div class="section-header reveal">
+                <h2 class="section-title">Farm in Action</h2>
+                <p class="section-subtitle">Watch our farm, see how we raise healthy chicks and deliver quality to your door</p>
+                <div class="video-divider"></div>
+            </div>
+            <div class="videos-grid" id="videosGrid">
+                <!-- Videos loaded dynamically from localStorage -->
+            </div>
+        </div>
+    </div>
+
+    <!-- About -->
+    <section id="about">
+        <div class="section-header reveal">
+            <h2 class="section-title">About Us</h2>
+        </div>
+        <div class="grid grid-2" style="align-items:center;">
+            <div class="reveal from-left">
+                <img loading="lazy" src="https://images.unsplash.com/photo-1594281577828-c705e2b87a05?w=800&q=80" alt="Farm" style="width:100%;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.15);">
+            </div>
+            <div class="reveal from-right">
+                <p id="aboutPara1" style="font-size:1.1rem;margin-bottom:1.5rem;"></p>
+                <p id="aboutPara2" style="font-size:1.1rem;margin-bottom:1.5rem;"></p>
+                <p id="aboutPara3" style="font-size:1.1rem;"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="section-header reveal">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle">We're here to help you succeed</p>
+        </div>
+        <div class="grid grid-2">
+            <div class="card reveal from-left">
+                <h3><i data-lucide="map-pin" style="width:20px;height:20px;display:inline;"></i> Visit Us</h3>
+                <p id="contactAddress" style="margin:1rem 0;">Matugga, Uganda</p>
+                <p style="margin-bottom:0.5rem;"><i data-lucide="phone" style="width:16px;height:16px;display:inline;"></i> <span id="contactPhone">+256 700 000 000</span></p>
+                <p style="margin-bottom:0.5rem;"><i data-lucide="mail" style="width:16px;height:16px;display:inline;"></i> <span id="contactEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="573e393138173438223923252e3136253a3a3623223030367934383a">[email&#160;protected]</a></span></p>
+                <p style="margin-top:1.5rem;">
+                    <a href="https://wa.me/256700000000" target="_blank" class="btn btn-primary" style="text-decoration:none;">
+                        <i data-lucide="message-circle" style="width:16px;height:16px;"></i> Chat on WhatsApp
+                    </a>
+                </p>
+            </div>
+            <form class="card reveal from-right" id="contactForm">
+                <h3>Send Message</h3>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label>Your Name</label>
+                    <input type="text" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i data-lucide="send" style="width:16px;height:16px;"></i>
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3 id="footerFarmName">Country Farm Matugga</h3>
+                <p>Your trusted partner in poultry farming</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" id="facebookLink"><i data-lucide="facebook" style="width:20px;height:20px;"></i></a>
+                    <a href="#" class="social-link" id="instagramLink"><i data-lucide="instagram" style="width:20px;height:20px;"></i></a>
+                    <a href="#" class="social-link" id="twitterLink"><i data-lucide="twitter" style="width:20px;height:20px;"></i></a>
+                    <a href="https://wa.me/256700000000" class="social-link" id="whatsappLink"><i data-lucide="message-circle" style="width:20px;height:20px;"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#products">Products</a>
+                <a href="#videos">Videos</a>
+                <a href="#about">About Us</a>
+                <a href="#contact">Contact</a>
+                <a href="admin-login.html">Admin Login</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i data-lucide="map-pin" style="width:16px;height:16px;"></i> <span id="footerAddress">Matugga, Uganda</span></p>
+                <p><i data-lucide="phone" style="width:16px;height:16px;"></i> <span id="footerPhone">+256 700 000 000</span></p>
+                <p><i data-lucide="mail" style="width:16px;height:16px;"></i> <span id="footerEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e777078715e7d716b706a6c67787f6c73737f6a6b79797f307d7173">[email&#160;protected]</a></span></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 <span id="copyrightName">Country Farm Matugga</span>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Quote Modal -->
+    <div class="modal" id="quoteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Request a Quote</h2>
+                <button class="modal-close" onclick="closeModal('quoteModal')">
+                    <i data-lucide="x" style="width:24px;height:24px;"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="quoteForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" class="form-control" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Farm Type *</label>
+                        <select class="form-control" name="farmType" required>
+                            <option value="">Select farm type</option>
+                            <option value="Commercial">Commercial Farm</option>
+                            <option value="Small-scale">Small-scale Farm</option>
+                            <option value="Backyard">Backyard Farm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Product of Interest *</label>
+                        <select class="form-control" name="product" required id="quoteProduct">
+                            <option value="">Select product</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Required *</label>
+                        <input type="number" class="form-control" name="quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Requirements</label>
+                        <textarea class="form-control" name="requirements" placeholder="Any specific requirements or questions?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">
+                        <i data-lucide="send" style="width:16px;height:16px;"></i>
+                        Submit Quote Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i data-lucide="check-circle" style="width:20px;height:20px;"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Lucide Icons -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+
+        const API_URL = '/api';
+
+        // ===== SCROLL REVEAL =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ===== LAZY LOAD IMAGES =====
+        const imgObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    imgObserver.unobserve(img);
+                }
+            });
+        });
+        document.querySelectorAll('img[data-src]').forEach(img => imgObserver.observe(img));
+
+        // Mobile menu
+        function toggleMobileMenu() {
+            document.getElementById('mobileNav').classList.toggle('active');
+            document.getElementById('mobileOverlay').classList.toggle('active');
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.className = `toast ${type} active`;
+            setTimeout(() => toast.classList.remove('active'), 3000);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ===== VIDEOS =====
+        const defaultVideos = [
+            {
+                id: 1,
+                title: 'Our Brooding House',
+                description: 'See how we maintain ideal conditions for our day-old chicks in our state-of-the-art brooding facility.',
+                category: 'Facility Tour',
+                src: '',
+                thumbnail: ''
+            },
+            {
+                id: 2,
+                title: 'Chick Quality Standards',
+                description: 'Watch our quality control process ensuring every chick meets our premium health and strength standards.',
+                category: 'Quality Assurance',
+                src: '',
+                thumbnail: ''
+            },
+            {
+                id: 3,
+                title: 'Farm Life at Matugga',
+                description: 'A day in the life of our farm — from hatchery to delivery, see the care that goes into every batch.',
+                category: 'Farm Life',
+                src: '',
+                thumbnail: ''
+            }
+        ];
+
+        function loadVideos() {
+            const stored = JSON.parse(localStorage.getItem('farmVideos') || 'null');
+            const videos = stored || defaultVideos;
+            displayVideos(videos);
+        }
+
+        function displayVideos(videos) {
+            const grid = document.getElementById('videosGrid');
+            grid.innerHTML = videos.map((v, i) => `
+                <div class="video-card reveal reveal-delay-${i}" style="--delay:${i * 0.15}s">
+                    <div class="video-wrapper">
+                        ${v.src ? `
+                            <video
+                                preload="none"
+                                controls
+                                poster="${v.thumbnail || ''}"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;"
+                                data-src="${v.src}"
+                                class="lazy-video"
+                            >
+                                <source src="${v.src}" type="video/mp4">
+                            </video>
+                        ` : `
+                            <div class="video-placeholder">
+                                <div class="video-placeholder-icon">
+                                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                                </div>
+                                <strong>${v.title}</strong>
+                                <p>Video coming soon</p>
+                            </div>
+                        `}
+                    </div>
+                    <div class="video-info">
+                        <span class="video-badge">${v.category || 'Farm Video'}</span>
+                        <h3>${v.title}</h3>
+                        <p>${v.description}</p>
+                        <div class="video-meta">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Country Farm Matugga
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Lazy load videos
+            const lazyVideos = grid.querySelectorAll('.lazy-video');
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const video = entry.target;
+                        if (video.dataset.src && !video.src) {
+                            video.src = video.dataset.src;
+                        }
+                        videoObserver.unobserve(video);
+                    }
+                });
+            }, { rootMargin: '200px' });
+            lazyVideos.forEach(v => videoObserver.observe(v));
+
+            // Re-run reveal observer on new cards
+            grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Load content
+        async function loadContent() {
+            try {
+                const response = await fetch(`${API_URL}/content`);
+                if (response.ok) { const c = await response.json(); updateContent(c); return; }
+            } catch {}
+            const content = JSON.parse(localStorage.getItem('websiteContent') || 'null');
+            if (content) updateContent(content);
+        }
+
+        function updateContent(content) {
+            document.getElementById('farmName').textContent = content.farmName || 'Country Farm Matugga';
+            document.getElementById('heroTitle').textContent = content.heroTitle || 'Premium Day-Old Chicks';
+            document.getElementById('heroSubtitle').textContent = content.heroSubtitle || 'Quality Poultry for Your Farm - Healthy, Strong & Productive';
+            document.getElementById('statsYears').textContent = content.statsYears || '15+';
+            document.getElementById('statsChicks').textContent = content.statsChicks || '500K+';
+            document.getElementById('statsSurvival').textContent = content.statsSurvival || '95%';
+            document.getElementById('statsFarmers').textContent = content.statsFarmers || '2,000+';
+            document.getElementById('aboutPara1').textContent = content.aboutPara1 || '';
+            document.getElementById('aboutPara2').textContent = content.aboutPara2 || '';
+            document.getElementById('aboutPara3').textContent = content.aboutPara3 || '';
+            document.getElementById('contactAddress').textContent = content.contactAddress || 'Matugga, Uganda';
+            document.getElementById('contactPhone').textContent = content.contactPhone || '+256 700 000 000';
+            document.getElementById('contactEmail').textContent = content.contactEmail || 'info@countryfarmmatugga.com';
+            document.getElementById('footerFarmName').textContent = content.farmName || 'Country Farm Matugga';
+            document.getElementById('footerAddress').textContent = content.contactAddress || 'Matugga, Uganda';
+            document.getElementById('footerPhone').textContent = content.contactPhone || '+256 700 000 000';
+            document.getElementById('footerEmail').textContent = content.contactEmail || 'info@countryfarmmatugga.com';
+            document.getElementById('copyrightName').textContent = content.farmName || 'Country Farm Matugga';
+            if (content.socialFacebook) document.getElementById('facebookLink').href = content.socialFacebook;
+            if (content.socialInstagram) document.getElementById('instagramLink').href = content.socialInstagram;
+            if (content.socialTwitter) document.getElementById('twitterLink').href = content.socialTwitter;
+            const waNum = content.contactWhatsApp || '256700000000';
+            document.getElementById('whatsappLink').href = `https://wa.me/${waNum}`;
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                if (response.ok) { const p = await response.json(); displayProducts(p); return; }
+            } catch {}
+            const products = JSON.parse(localStorage.getItem('farmProducts') || 'null') || defaultProducts;
+            displayProducts(products);
+        }
+
+        const defaultProducts = [
+            { id: 1, name: 'Broiler Day-Old Chicks', description: 'Fast-growing, high-quality broiler chicks from certified breeds.', price: 3500, image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=80' },
+            { id: 2, name: 'Layer Day-Old Chicks', description: 'Premium layer breeds with excellent egg production rates.', price: 4200, image: 'https://images.unsplash.com/photo-1612170153139-6f881ff067e0?w=400&q=80' },
+            { id: 3, name: 'Kuroiler Chicks', description: 'Dual-purpose breed for both meat and eggs.', price: 5000, image: 'https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=400&q=80' }
+        ];
+
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const quoteProduct = document.getElementById('quoteProduct');
+            grid.innerHTML = products.map((product, i) => `
+                <div class="card reveal reveal-delay-${i % 3}">
+                    <img
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        data-src="${product.image}"
+                        alt="${product.name}"
+                        loading="lazy"
+                        style="width:100%;height:200px;object-fit:cover;border-radius:8px;margin-bottom:1rem;"
+                    >
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p style="font-size:1.5rem;font-weight:700;color:var(--accent-gold);margin:1rem 0;">UGX ${product.price.toLocaleString()}</p>
+                    <button class="btn btn-primary" style="width:100%;" onclick="openQuoteModal('${product.name}')">
+                        <i data-lucide="shopping-cart" style="width:16px;height:16px;"></i>
+                        Request Quote
+                    </button>
+                </div>
+            `).join('');
+            quoteProduct.innerHTML = '<option value="">Select product</option>' + products.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+            // Activate lazy loading on newly created images
+            grid.querySelectorAll('img[data-src]').forEach(img => imgObserver.observe(img));
+            // Activate scroll reveal on new cards
+            grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function openQuoteModal(productName) {
+            openModal('quoteModal');
+            if (productName) document.querySelector('#quoteProduct').value = productName;
+        }
+
+        document.getElementById('quoteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            try {
+                const response = await fetch(`${API_URL}/quotes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (response.ok) { showToast('Quote request submitted!', 'success'); closeModal('quoteModal'); e.target.reset(); return; }
+            } catch {}
+            const quotes = JSON.parse(localStorage.getItem('farmQuotes') || '[]');
+            quotes.push({ ...data, date: new Date().toISOString(), id: Date.now() });
+            localStorage.setItem('farmQuotes', JSON.stringify(quotes));
+            showToast('Quote request submitted!', 'success');
+            closeModal('quoteModal');
+            
