@@ -3,281 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Country Farm Matugga</title>
+    <title>Admin Login – Country Farm Matugga</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="Logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+    </noscript>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a2e0a 0%, #2d5016 50%, #4a7c2d 100%);
+            font-family: 'Poppins', system-ui, sans-serif;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f1e07 0%, #2d5016 55%, #4a7c2d 100%);
             padding: 1rem;
-            position: relative;
-            overflow: hidden;
         }
-        /* Decorative circles */
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.08;
+
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.4rem 2.2rem;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            animation: up .45s ease both;
         }
-        body::before {
-            width: 500px; height: 500px;
-            background: #d4af37;
-            top: -200px; right: -100px;
+        @keyframes up { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
+
+        .brand { text-align: center; margin-bottom: 1.8rem; }
+        .brand img  { height: 80px; width: auto; margin-bottom: .6rem; }
+        .brand h1   { font-size: 1.35rem; color: #2d5016; font-weight: 700; line-height: 1.2; }
+        .brand p    { font-size: .85rem; color: #718096; margin-top: .2rem; }
+
+        hr { border: none; border-top: 1px solid #e2e8f0; margin-bottom: 1.6rem; }
+
+        .err {
+            background: #fff5f5; border: 1px solid #fecaca;
+            border-radius: 8px; padding: .7rem 1rem;
+            color: #b91c1c; font-size: .86rem;
+            display: none; align-items: center; gap: .5rem;
+            margin-bottom: 1.1rem;
         }
-        body::after {
-            width: 400px; height: 400px;
-            background: #d4af37;
-            bottom: -150px; left: -100px;
+        .err.show { display: flex; }
+
+        .fg { margin-bottom: 1.1rem; }
+        .fg label { display: block; font-size: .83rem; font-weight: 600; color: #2d3748; margin-bottom: .35rem; }
+        .wrap { position: relative; }
+        .wrap .ico {
+            position: absolute; left: .85rem; top: 50%; transform: translateY(-50%);
+            color: #a0aec0; pointer-events: none;
         }
-        .login-box {
-            background: white;
-            border-radius: 24px;
-            padding: 3rem;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
-            animation: fadeUp 0.6s ease;
+        .wrap input {
+            width: 100%; padding: .8rem 1rem .8rem 2.5rem;
+            border: 2px solid #e2e8f0; border-radius: 10px;
+            font-size: .93rem; font-family: inherit;
+            color: #1a202c; background: #f8fafc;
+            transition: border-color .2s, box-shadow .2s;
         }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .wrap input:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212,175,55,.15); background: #fff; }
+        .eye {
+            position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; color: #a0aec0; padding: .2rem;
         }
-        .login-logo {
-            text-align: center;
-            margin-bottom: 2rem;
+        .eye:hover { color: #2d5016; }
+
+        .submit {
+            width: 100%; padding: .9rem;
+            background: #2d5016; color: #fff;
+            border: none; border-radius: 10px;
+            font-size: .97rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: .5rem;
+            transition: background .2s, transform .15s, box-shadow .2s;
         }
-        .login-logo svg {
-            margin: 0 auto 1rem;
-            display: block;
-        }
-        .login-logo h1 {
-            font-family: 'Playfair Display', serif;
-            color: #2d5016;
-            font-size: 1.6rem;
-            margin-bottom: 0.3rem;
-        }
-        .login-logo p {
-            color: #718096;
-            font-size: 0.9rem;
-        }
-        .login-divider {
-            height: 3px;
-            background: linear-gradient(to right, transparent, #d4af37, transparent);
-            margin: 1.5rem 0;
-            border-radius: 2px;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #2d3748;
-            font-size: 0.9rem;
-        }
-        .input-wrapper {
-            position: relative;
-        }
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #a0aec0;
-            pointer-events: none;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.9rem 1rem 0.9rem 3rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-            background: #f8fafc;
-            color: #1a202c;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
-            background: white;
-        }
-        .toggle-pw {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #a0aec0;
-            padding: 0;
-        }
-        .toggle-pw:hover { color: #2d5016; }
-        .btn-login {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #2d5016, #4a7c2d);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 0.5px;
-            margin-top: 0.5rem;
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(45,80,22,0.3);
-        }
-        .btn-login:active { transform: translateY(0); }
-        .error-msg {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .error-msg.show { display: flex; }
-        .back-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #718096;
-        }
-        .back-link a {
-            color: #2d5016;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .back-link a:hover { text-decoration: underline; }
-        .loading-spinner {
-            display: none;
+        .submit:hover { background: #3d6b1e; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(45,80,22,.3); }
+        .submit:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+        .submit .spin {
             width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            margin: 0 auto;
+            border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+            border-radius: 50%; animation: spin .7s linear infinite; display: none;
         }
-        .btn-login.loading .btn-text { display: none; }
-        .btn-login.loading .loading-spinner { display: block; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .submit.loading .txt  { display: none; }
+        .submit.loading .spin { display: block; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        .back { display: block; text-align: center; margin-top: 1.3rem; font-size: .84rem; color: #718096; text-decoration: none; }
+        .back:hover { color: #2d5016; }
+
+        .creds {
+            margin-top: 1.4rem; padding: .9rem 1rem;
+            background: #f0f9f4; border-radius: 8px;
+            font-size: .8rem; color: #2d5016;
+            border: 1px solid #c6e8d5;
+        }
+        .creds strong { display: block; margin-bottom: .3rem; }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <div class="login-logo">
-            <!-- Country Farm Logo -->
-            <img src="Logo.png" alt="Country Farm Matugga" style="width:130px;height:auto;display:block;margin:0 auto 1rem;">
-            <h1>Country Farm Matugga</h1>
-            <p>Admin Dashboard Access</p>
-        </div>
-        <div class="login-divider"></div>
+<div class="card">
+    <div class="brand">
+        <img src="Logo.png" alt="Country Farm Matugga logo">
+        <h1>Country Farm Matugga</h1>
+        <p>Admin Dashboard Login</p>
+    </div>
+    <hr>
 
-        <div class="error-msg" id="errorMsg">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span id="errorText">Invalid email or password.</span>
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email Address</label>
-                <div class="input-wrapper">
-                    <span class="input-icon">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    </span>
-                    <input type="email" class="form-control" id="loginEmail" placeholder="admin@cfm.com" autocomplete="email" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <div class="input-wrapper">
-                    <span class="input-icon">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </span>
-                    <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
-                    <button type="button" class="toggle-pw" id="togglePw" title="Show/hide password">
-                        <svg id="eyeIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-login" id="loginBtn">
-                <span class="btn-text">Sign In to Dashboard</span>
-                <div class="loading-spinner"></div>
-            </button>
-        </form>
-
-        <p class="back-link"><a href="index.html">← Back to Website</a></p>
+    <div class="err" id="errBox">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errMsg">Invalid email or password.</span>
     </div>
 
-    <script>
-        // Default credentials (stored in localStorage so admin can update them)
-        function getCredentials() {
-            return {
-                email: localStorage.getItem('adminEmail') || 'admin@cfm.com',
-                password: localStorage.getItem('adminPassword') || 'Passw0rd'
-            };
-        }
+    <form id="loginForm" novalidate>
+        <div class="fg">
+            <label for="email">Email Address</label>
+            <div class="wrap">
+                <svg class="ico" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input type="email" id="email" placeholder="admin@cfm.com" autocomplete="username" required>
+            </div>
+        </div>
+        <div class="fg">
+            <label for="password">Password</label>
+            <div class="wrap">
+                <svg class="ico" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                <button type="button" class="eye" id="eyeBtn" aria-label="Toggle password">
+                    <svg id="eyeShow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg id="eyeHide" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
+        </div>
 
-        // Password toggle
-        document.getElementById('togglePw').addEventListener('click', () => {
-            const input = document.getElementById('loginPassword');
-            const icon = document.getElementById('eyeIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        <button type="submit" class="submit" id="submitBtn">
+            <span class="txt">Sign In to Dashboard</span>
+            <div class="spin"></div>
+        </button>
+    </form>
+
+    <div class="creds">
+        <strong>Default login credentials:</strong>
+        Email: admin@cfm.com<br>
+        Password: Passw0rd<br>
+        <span style="opacity:.7;">(Change these in Admin → Settings after logging in)</span>
+    </div>
+
+    <a href="index.html" class="back">← Back to website</a>
+</div>
+
+<script>
+    var DEFAULT_EMAIL = 'admin@cfm.com';
+    var DEFAULT_PASS  = 'Passw0rd';
+
+    // If already logged in, go straight to dashboard
+    if (localStorage.getItem('cfm_admin_auth') === 'true') {
+        window.location.replace('admin.html');
+    }
+
+    // Password toggle
+    document.getElementById('eyeBtn').addEventListener('click', function() {
+        var inp = document.getElementById('password');
+        var isText = inp.type === 'text';
+        inp.type = isText ? 'password' : 'text';
+        document.getElementById('eyeShow').style.display = isText ? '' : 'none';
+        document.getElementById('eyeHide').style.display = isText ? 'none' : '';
+    });
+
+    function showErr(msg) {
+        document.getElementById('errMsg').textContent = msg || 'Invalid email or password.';
+        document.getElementById('errBox').classList.add('show');
+    }
+    function hideErr() { document.getElementById('errBox').classList.remove('show'); }
+
+    document.getElementById('email').addEventListener('input', hideErr);
+    document.getElementById('password').addEventListener('input', hideErr);
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideErr();
+
+        var email = document.getElementById('email').value.trim();
+        var pass  = document.getElementById('password').value;
+        var btn   = document.getElementById('submitBtn');
+
+        if (!email || !pass) { showErr('Please enter your email and password.'); return; }
+
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        // Small artificial delay for UX feedback
+        setTimeout(function() {
+            var storedEmail = localStorage.getItem('cfm_admin_email') || DEFAULT_EMAIL;
+            var storedPass  = localStorage.getItem('cfm_admin_pass')  || DEFAULT_PASS;
+
+            if (email === storedEmail && pass === storedPass) {
+                localStorage.setItem('cfm_admin_auth', 'true');
+                window.location.href = 'admin.html';
             } else {
-                input.type = 'password';
-                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                document.getElementById('password').value = '';
+                showErr('Incorrect email or password. Please try again.');
             }
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('loginBtn');
-            const errorEl = document.getElementById('errorMsg');
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-
-            btn.classList.add('loading');
-            errorEl.classList.remove('show');
-
-            // Simulate slight delay for UX
-            setTimeout(() => {
-                const creds = getCredentials();
-                if (email === creds.email && password === creds.password) {
-                    // Set session token
-                    sessionStorage.setItem('adminAuth', btoa(`${email}:${Date.now()}`));
-                    window.location.href = 'admin.html';
-                } else {
-                    btn.classList.remove('loading');
-                    document.getElementById('errorText').textContent = 'Invalid email or password. Please try again.';
-                    errorEl.classList.add('show');
-                    document.getElementById('loginPassword').value = '';
-                }
-            }, 700);
-        });
-    </script>
+        }, 500);
+    });
+</script>
 </body>
 </html>

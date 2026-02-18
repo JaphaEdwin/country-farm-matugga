@@ -3,1001 +3,1143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Country Farm Matugga</title>
+    <title>Admin – Country Farm Matugga</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="Logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+    </noscript>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #1a202c; }
+/* ── RESET ─────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .admin-container { display: flex; min-height: 100vh; }
+/* ── ROOT ─────────────────────────────── */
+:root {
+    --green:  #2d5016;
+    --green2: #4a7c2d;
+    --gold:   #d4af37;
+    --gold2:  #e8c547;
+    --dark:   #1a202c;
+    --mid:    #4a5568;
+    --light:  #718096;
+    --border: #e2e8f0;
+    --bg:     #f0f2f5;
+    --white:  #ffffff;
+    --red:    #ef4444;
+    --red2:   #dc2626;
+    --ok:     #10b981;
+    --warn:   #f59e0b;
+}
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: #1a202c;
-            color: white;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .sidebar-header svg { flex-shrink: 0; }
-        .sidebar-header h1 { font-size: 1rem; color: #d4af37; }
-        .sidebar-header p { font-size: 0.75rem; color: #718096; }
-        .menu-section { padding: 1rem 0; }
-        .menu-label { padding: 0 1.5rem; font-size: 0.72rem; text-transform: uppercase; color: #718096; margin-bottom: 0.4rem; font-weight: 600; letter-spacing: 0.5px; }
-        .menu-item {
-            padding: 0.85rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            color: #cbd5e0;
-            font-size: 0.9rem;
-        }
-        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
-        .menu-item.active { background: #2d5016; color: white; border-left: 3px solid #d4af37; }
+body { font-family: 'Poppins', system-ui, sans-serif; background: var(--bg); color: var(--dark); }
 
-        /* Main */
-        .main-content { flex: 1; margin-left: 260px; padding: 2rem; min-height: 100vh; }
-        .top-header {
-            background: white;
-            padding: 1.2rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .page-title { font-size: 1.6rem; color: #1a202c; font-weight: 700; }
-        .header-actions { display: flex; align-items: center; gap: 1rem; }
-        .admin-badge {
-            background: #ebf8f0;
-            color: #2d5016;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
+/* ── LAYOUT ───────────────────────────── */
+.layout { display:flex; min-height:100vh; }
 
-        /* Section display */
-        .content-section { display: none; }
-        .content-section.active { display: block; }
+/* ── SIDEBAR ──────────────────────────── */
+.sidebar {
+    width: 240px; flex-shrink: 0;
+    background: var(--dark); color: #fff;
+    position: fixed; top:0; left:0; height:100vh;
+    overflow-y: auto; z-index:200;
+    display: flex; flex-direction:column;
+}
+.sb-logo {
+    padding: 1rem; border-bottom: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items:center; gap:.75rem;
+}
+.sb-logo img { height:42px; width:auto; flex-shrink:0; }
+.sb-logo-txt h2 { font-size:.9rem; color:var(--gold); font-weight:700; }
+.sb-logo-txt p  { font-size:.72rem; color:var(--light); }
 
-        /* Stats grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border-left: 4px solid #d4af37;
-        }
-        .stat-label { color: #718096; font-size: 0.85rem; margin-bottom: 0.4rem; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: #2d5016; }
+.sb-group { padding:.6rem 0; }
+.sb-label { padding:0 1rem; font-size:.66rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:#4a5568; margin-bottom:.15rem; }
 
-        /* Cards */
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f7fafc;
-        }
-        .card-title { font-size: 1.2rem; font-weight: 700; color: #1a202c; }
+.sb-item {
+    display: flex; align-items:center; gap:.7rem;
+    padding: .72rem 1rem; cursor:pointer;
+    color: #a0aec0; font-size:.87rem; font-weight:500;
+    border-left: 3px solid transparent;
+    transition: background .15s, color .15s, border-color .15s;
+    user-select: none; text-decoration: none;
+}
+.sb-item:hover  { background:rgba(255,255,255,.06); color:#fff; }
+.sb-item.active { background:rgba(45,80,22,.55); color:#fff; border-left-color:var(--gold); }
+.sb-item svg { flex-shrink:0; }
 
-        /* Buttons */
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-        }
-        .btn-primary { background: #2d5016; color: white; }
-        .btn-primary:hover { background: #4a7c2d; transform: translateY(-1px); }
-        .btn-secondary { background: #d4af37; color: #1a202c; }
-        .btn-secondary:hover { background: #e8c547; }
-        .btn-success { background: #10b981; color: white; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-ghost { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
-        .btn-ghost:hover { background: #edf2f7; }
-        .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+.sb-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.08); padding:.6rem 0; }
 
-        /* Forms */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2d3748; font-size: 0.9rem; }
-        .form-control {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-            background: #f8fafc;
-            color: #1a202c;
-        }
-        .form-control:focus { outline: none; border-color: #d4af37; box-shadow: 0 0 0 3px rgba(212,175,55,0.1); background: white; }
-        textarea.form-control { min-height: 90px; resize: vertical; }
+/* ── MAIN ─────────────────────────────── */
+.main { margin-left:240px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
 
-        /* Tables */
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 0.9rem 1rem; background: #f7fafc; border-bottom: 2px solid #e2e8f0; font-weight: 600; color: #2d3748; font-size: 0.88rem; }
-        td { padding: 0.9rem 1rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
-        tr:hover { background: #f7fafc; }
+/* ── TOPBAR ───────────────────────────── */
+.topbar {
+    background: var(--white); padding:.9rem 1.8rem;
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 1px 4px rgba(0,0,0,.07);
+}
+.topbar h1 { font-size:1.25rem; font-weight:700; }
+.topbar-r  { display:flex; align-items:center; gap:.7rem; }
+.admin-pill {
+    background:#ebf8f0; color:var(--green);
+    padding:.3rem .85rem; border-radius:20px;
+    font-size:.8rem; font-weight:600;
+    display:flex; align-items:center; gap:.35rem;
+}
 
-        /* Video Manager */
-        .video-list { display: flex; flex-direction: column; gap: 1rem; }
-        .video-item {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 1.5rem;
-            align-items: center;
-        }
-        .video-number {
-            width: 40px; height: 40px;
-            background: linear-gradient(135deg, #2d5016, #4a7c2d);
-            color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 1rem;
-            flex-shrink: 0;
-        }
-        .video-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 700px) {
-            .video-fields { grid-template-columns: 1fr; }
-            .video-item { grid-template-columns: auto 1fr; }
-            .video-item-actions { grid-column: 1 / -1; }
-        }
-        .video-fields label { font-size: 0.8rem; font-weight: 600; color: #4a5568; display: block; margin-bottom: 0.3rem; }
-        .video-fields input, .video-fields textarea, .video-fields select {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.88rem;
-            font-family: 'Poppins', sans-serif;
-            background: white;
-            color: #1a202c;
-            transition: border-color 0.2s;
-        }
-        .video-fields input:focus, .video-fields textarea:focus, .video-fields select:focus {
-            outline: none; border-color: #d4af37;
-        }
-        .video-fields .full-width { grid-column: 1 / -1; }
-        .video-status {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.78rem; font-weight: 600;
-        }
-        .video-status.has-video { background: #d1fae5; color: #065f46; }
-        .video-status.no-video { background: #fef3c7; color: #92400e; }
+/* ── CONTENT AREA ─────────────────────── */
+.content { padding:1.6rem 1.8rem; flex:1; }
 
-        /* Settings */
-        .settings-section {
-            background: #f7fafc;
-            border-left: 4px solid #d4af37;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-        .settings-title {
-            font-weight: 700;
-            color: #2d5016;
-            margin-bottom: 1rem;
-            display: flex; align-items: center; gap: 0.5rem;
-            font-size: 1rem;
-        }
+/* ── SECTION VISIBILITY ─────────────── */
+.sec { display:none; }
+.sec.active { display:block; }
 
-        /* Modal */
-        .modal {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center; justify-content: center;
-            padding: 1rem;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: white; border-radius: 16px;
-            max-width: 700px; width: 100%;
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { font-size: 1.3rem; color: #1a202c; }
-        .modal-close { background: none; border: none; cursor: pointer; padding: 0.5rem; }
-        .modal-body { padding: 2rem; }
+/* ── STAT GRID ────────────────────────── */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.1rem; margin-bottom:1.8rem; }
+.stat-card {
+    background:var(--white); border-radius:12px; padding:1.3rem;
+    border-left:4px solid var(--gold);
+    box-shadow:0 1px 4px rgba(0,0,0,.07);
+}
+.stat-card .lbl { font-size:.8rem; color:var(--light); margin-bottom:.25rem; }
+.stat-card .val { font-size:2rem; font-weight:700; color:var(--green); line-height:1; }
 
-        /* Badge */
-        .badge { padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .badge-success { background: #d1fae5; color: #065f46; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
+/* ── CARD ─────────────────────────────── */
+.card {
+    background:var(--white); border-radius:12px; padding:1.6rem;
+    box-shadow:0 1px 4px rgba(0,0,0,.07); margin-bottom:1.4rem;
+}
+.card-h {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:1.3rem; padding-bottom:.9rem;
+    border-bottom:2px solid #f7fafc;
+    gap: .5rem; flex-wrap: wrap;
+}
+.card-h h3 { font-size:1.05rem; font-weight:700; }
 
-        /* Toast */
-        .toast {
-            position: fixed; bottom: 2rem; right: 2rem;
-            background: #2d5016; color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            z-index: 2000;
-            display: none; align-items: center; gap: 0.5rem;
-            animation: slideIn 0.3s;
-        }
-        .toast.active { display: flex; }
-        .toast.success { background: #10b981; }
-        .toast.error { background: #ef4444; }
-        @keyframes slideIn { from { transform: translateX(300px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+/* ── BUTTONS ──────────────────────────── */
+.btn {
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.55rem 1.1rem; border:none; border-radius:8px;
+    font-size:.86rem; font-weight:600; cursor:pointer;
+    font-family:inherit; transition:background .15s, transform .15s, box-shadow .15s;
+    white-space: nowrap;
+}
+.btn:hover { transform:translateY(-1px); }
+.btn:active { transform:none; }
+.btn-primary { background:var(--green); color:#fff; }
+.btn-primary:hover { background:var(--green2); box-shadow:0 3px 10px rgba(45,80,22,.3); }
+.btn-gold    { background:var(--gold); color:var(--dark); }
+.btn-gold:hover { background:var(--gold2); }
+.btn-danger  { background:var(--red); color:#fff; }
+.btn-danger:hover { background:var(--red2); }
+.btn-ghost   { background:#f7fafc; color:var(--mid); border:1px solid var(--border); }
+.btn-ghost:hover { background:#edf2f7; }
+.btn-sm { padding:.32rem .7rem; font-size:.78rem; }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar { width: 60px; }
-            .sidebar-header h1, .sidebar-header p, .menu-label, .menu-item span { display: none; }
-            .sidebar-header { justify-content: center; padding: 1rem; }
-            .main-content { margin-left: 60px; padding: 1rem; }
-        }
+/* ── FORMS ────────────────────────────── */
+.frow { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:.9rem; }
+.fg   { margin-bottom:.9rem; }
+.fg label { display:block; font-size:.82rem; font-weight:600; color:#2d3748; margin-bottom:.32rem; }
+.fg label .hint { font-weight:400; color:#a0aec0; font-size:.76rem; }
+.fc {
+    width:100%; padding:.68rem .85rem;
+    border:2px solid var(--border); border-radius:8px;
+    font-size:.88rem; font-family:inherit;
+    background:#f8fafc; color:var(--dark);
+    transition:border-color .2s, box-shadow .2s;
+}
+.fc:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.15); background:#fff; }
+.fc[readonly] { background:#edf2f7; cursor:default; }
+textarea.fc   { min-height:88px; resize:vertical; }
+
+/* ── SETTINGS PANEL ───────────────────── */
+.sp {
+    background:#f8fafc; border-left:4px solid var(--gold);
+    border-radius:8px; padding:1.3rem; margin-bottom:1.3rem;
+}
+.sp h4 { font-size:.95rem; font-weight:700; color:var(--green); margin-bottom:.9rem; display:flex; align-items:center; gap:.45rem; }
+.sp.danger { border-left-color:var(--red); background:#fff5f5; }
+.sp.danger h4 { color:#991b1b; }
+
+/* ── TABLE ────────────────────────────── */
+.tw { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:.86rem; }
+th {
+    padding:.75rem .9rem; text-align:left;
+    background:#f7fafc; border-bottom:2px solid var(--border);
+    font-weight:600; color:var(--mid); font-size:.8rem;
+    white-space: nowrap;
+}
+td { padding:.75rem .9rem; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#fafafa; }
+.empty td { text-align:center; padding:2.5rem; color:#a0aec0; font-size:.88rem; }
+
+/* ── BADGE ────────────────────────────── */
+.badge { display:inline-block; padding:.18rem .6rem; border-radius:20px; font-size:.76rem; font-weight:600; }
+.bg-green  { background:#d1fae5; color:#065f46; }
+.bg-yellow { background:#fef3c7; color:#92400e; }
+.bg-red    { background:#fee2e2; color:#991b1b; }
+.bg-blue   { background:#dbeafe; color:#1e40af; }
+
+/* ── VIDEO SLOT ───────────────────────── */
+.vslot {
+    border:1px solid var(--border); border-radius:10px;
+    padding:1.3rem; margin-bottom:1rem; background:#f8fafc;
+    display:grid; grid-template-columns:44px 1fr; gap:1.1rem; align-items:start;
+}
+.vnum {
+    width:44px; height:44px;
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    color:#fff; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:1rem; flex-shrink:0;
+}
+.vgrid { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+.vgrid .full { grid-column:1/-1; }
+.vstatus { display:inline-flex; align-items:center; gap:.35rem; padding:.22rem .65rem; border-radius:20px; font-size:.76rem; font-weight:600; }
+.vset  { background:#d1fae5; color:#065f46; }
+.vnone { background:#fef3c7; color:#92400e; }
+
+/* ── MODAL ────────────────────────────── */
+.modal {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.65); z-index:500;
+    align-items:center; justify-content:center; padding:1rem;
+}
+.modal.open { display:flex; }
+.mbox {
+    background:var(--white); border-radius:16px;
+    max-width:640px; width:100%; max-height:92vh; overflow-y:auto;
+    animation:mup .25s ease both;
+}
+@keyframes mup { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+.mhead { padding:1.3rem 1.6rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.mhead h3 { font-size:1.1rem; font-weight:700; }
+.mclose { background:none; border:none; cursor:pointer; font-size:1.3rem; color:var(--light); padding:.2rem .5rem; border-radius:6px; }
+.mclose:hover { background:#f0f2f5; color:var(--dark); }
+.mbody { padding:1.6rem; }
+
+/* ── TOAST ────────────────────────────── */
+.toast {
+    position:fixed; bottom:1.4rem; right:1.4rem;
+    background:var(--green); color:#fff;
+    padding:.85rem 1.3rem; border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.2);
+    z-index:900; display:none; align-items:center; gap:.55rem;
+    font-size:.88rem; font-weight:500; max-width:340px;
+    animation:tin .25s ease both;
+}
+.toast.show  { display:flex; }
+.toast.ok    { background:var(--ok); }
+.toast.err   { background:var(--red); }
+.toast.warn  { background:var(--warn); color:var(--dark); }
+@keyframes tin { from{transform:translateX(120px);opacity:0} to{transform:none;opacity:1} }
+
+/* ── QUICK ACTION CARD ────────────────── */
+.qa-card {
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    border-radius:12px; padding:1.4rem; color:#fff; margin-bottom:1.4rem;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+}
+.qa-card h3 { font-size:1.05rem; margin-bottom:.3rem; }
+.qa-card p  { opacity:.85; font-size:.86rem; }
+.qa-btns    { display:flex; gap:.55rem; flex-wrap:wrap; }
+
+/* ── IMG PREVIEW ──────────────────────── */
+.img-pre { margin-bottom:.9rem; display:none; }
+.img-pre img { max-height:130px; border-radius:8px; border:1px solid var(--border); max-width:100%; display:block; }
+
+/* ── RESPONSIVE ───────────────────────── */
+@media(max-width:768px){
+    .sidebar { width:56px; }
+    .sb-logo-txt,.sb-label,.sb-item span { display:none; }
+    .sb-logo { justify-content:center; padding:.7rem; }
+    .sb-item { justify-content:center; padding:.8rem; }
+    .main    { margin-left:56px; }
+    .content { padding:1rem; }
+    .topbar  { padding:.8rem 1rem; }
+    .vgrid   { grid-template-columns:1fr; }
+    .vgrid .full { grid-column:1; }
+    .vslot   { grid-template-columns:1fr; }
+    .vnum    { display:none; }
+    .stat-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:460px){
+    .stat-grid { grid-template-columns:1fr; }
+    .frow { grid-template-columns:1fr; }
+}
     </style>
 </head>
 <body>
-<div class="admin-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <img src="Logo.png" alt="Country Farm Matugga" style="height:44px;width:auto;flex-shrink:0;">
-            <div>
-                <h1>Admin Panel</h1>
-                <p>Country Farm</p>
-            </div>
-        </div>
 
-        <div class="menu-section">
-            <div class="menu-label">Overview</div>
-            <div class="menu-item active" data-section="dashboard">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                <span>Dashboard</span>
-            </div>
-        </div>
+<!-- ══ AUTH GUARD ══════════════════════════════════════════════════════
+     Uses localStorage so it survives tab close, refresh, and direct URL.
+     Only clears on explicit logout.
+═════════════════════════════════════════════════════════════════════ -->
+<script>
+if (localStorage.getItem('cfm_admin_auth') !== 'true') {
+    window.location.replace('admin-login.html');
+}
+</script>
 
-        <div class="menu-section">
-            <div class="menu-label">Business</div>
-            <div class="menu-item" data-section="quotes">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                <span>Quotations</span>
-            </div>
-            <div class="menu-item" data-section="orders">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span>Orders</span>
-            </div>
-        </div>
+<div class="layout">
 
-        <div class="menu-section">
-            <div class="menu-label">Website</div>
-            <div class="menu-item" data-section="content">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                <span>Content</span>
-            </div>
-            <div class="menu-item" data-section="products">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                <span>Products</span>
-            </div>
-            <div class="menu-item" data-section="videos">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                <span>Videos</span>
-            </div>
-        </div>
-
-        <div class="menu-section">
-            <div class="menu-label">Settings</div>
-            <div class="menu-item" data-section="settings">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                <span>Settings</span>
-            </div>
-            <div class="menu-item" data-section="logout" id="logoutBtn">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span>Logout</span>
-            </div>
+<!-- ══ SIDEBAR ══════════════════════════════════════════════════════ -->
+<aside class="sidebar" role="navigation" aria-label="Admin sidebar">
+    <div class="sb-logo">
+        <img src="Logo.png" alt="Country Farm Matugga">
+        <div class="sb-logo-txt">
+            <h2>Admin Panel</h2>
+            <p>Country Farm Matugga</p>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="top-header">
-            <h1 class="page-title" id="pageTitle">Dashboard</h1>
-            <div class="header-actions">
-                <div class="admin-badge">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <span id="adminEmailDisplay"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfbebbb2b6b19fbcb9b2f1bcb0b2">[email&#160;protected]</a></span>
-                </div>
-                <button class="btn btn-primary" onclick="saveAllChanges()">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Save All Changes
-                </button>
-            </div>
+    <div class="sb-group">
+        <div class="sb-label">Overview</div>
+        <div class="sb-item active" data-tab="dashboard">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
         </div>
+    </div>
 
-        <!-- Dashboard -->
-        <div class="content-section active" id="dashboard">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Pending Quotes</div>
-                    <div class="stat-value" id="statQuotes">0</div>
+    <div class="sb-group">
+        <div class="sb-label">Business</div>
+        <div class="sb-item" data-tab="quotes">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Quotations</span>
+        </div>
+        <div class="sb-item" data-tab="orders">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Orders</span>
+        </div>
+    </div>
+
+    <div class="sb-group">
+        <div class="sb-label">Website</div>
+        <div class="sb-item" data-tab="content">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Content</span>
+        </div>
+        <div class="sb-item" data-tab="products">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>Products</span>
+        </div>
+        <div class="sb-item" data-tab="videos">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <span>Videos</span>
+        </div>
+    </div>
+
+    <div class="sb-group">
+        <div class="sb-label">Account</div>
+        <div class="sb-item" data-tab="settings">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+        </div>
+    </div>
+
+    <div class="sb-footer">
+        <div class="sb-item" id="logoutBtn">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Logout</span>
+        </div>
+        <a href="index.html" target="_blank" class="sb-item">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>View Website</span>
+        </a>
+    </div>
+</aside>
+
+<!-- ══ MAIN ═════════════════════════════════════════════════════════ -->
+<div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="topbar-r">
+            <div class="admin-pill">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span id="adminEmail">admin@cfm.com</span>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveCurrentSection()">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- ═══ DASHBOARD ═══════════════════════════════════════════ -->
+        <div class="sec active" id="tab-dashboard">
+            <div class="stat-grid">
+                <div class="stat-card"><div class="lbl">Quote Requests</div><div class="val" id="st-quotes">0</div></div>
+                <div class="stat-card"><div class="lbl">Orders</div><div class="val" id="st-orders">0</div></div>
+                <div class="stat-card"><div class="lbl">Products Listed</div><div class="val" id="st-products">0</div></div>
+                <div class="stat-card"><div class="lbl">Videos Live</div><div class="val" id="st-videos">0</div></div>
+            </div>
+
+            <div class="qa-card">
+                <div>
+                    <h3>Quick Actions</h3>
+                    <p>Jump to the most common admin tasks</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Orders</div>
-                    <div class="stat-value" id="statOrders">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Products</div>
-                    <div class="stat-value" id="statProducts">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Videos Published</div>
-                    <div class="stat-value" id="statVideos">0</div>
+                <div class="qa-btns">
+                    <button class="btn btn-gold btn-sm" onclick="goTab('content')">Edit Content</button>
+                    <button class="btn btn-gold btn-sm" onclick="goTab('products')">Products</button>
+                    <button class="btn btn-gold btn-sm" onclick="goTab('videos')">Videos</button>
+                    <button class="btn btn-gold btn-sm" onclick="goTab('quotes')">View Quotes</button>
                 </div>
             </div>
+
             <div class="card">
-                <div class="card-header"><h3 class="card-title">Recent Quote Requests</h3></div>
-                <div class="table-wrapper">
+                <div class="card-h"><h3>Recent Quote Requests</h3><button class="btn btn-ghost btn-sm" onclick="goTab('quotes')">View All →</button></div>
+                <div class="tw">
                     <table>
-                        <thead>
-                            <tr><th>Date</th><th>Name</th><th>Product</th><th>Qty</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody id="recentActivity">
-                            <tr><td colspan="5" style="text-align:center;padding:2rem;color:#718096;">No recent activity</td></tr>
-                        </tbody>
+                        <thead><tr><th>Date</th><th>Name</th><th>Product</th><th>Qty</th><th>Phone</th></tr></thead>
+                        <tbody id="dash-quotes"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Quotes -->
-        <div class="content-section" id="quotes">
+        <!-- ═══ QUOTATIONS ═══════════════════════════════════════════ -->
+        <div class="sec" id="tab-quotes">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Quote Requests</h3>
+                <div class="card-h">
+                    <h3>Quote Requests &nbsp;<span id="q-count" class="badge bg-blue">0</span></h3>
                     <button class="btn btn-danger btn-sm" onclick="clearQuotes()">Clear All</button>
                 </div>
-                <div class="table-wrapper">
+                <p style="font-size:.84rem;color:var(--light);margin-bottom:1rem;">These are submitted by visitors on the website's contact form.</p>
+                <div class="tw">
                     <table>
-                        <thead>
-                            <tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Product</th><th>Qty</th><th>Farm Type</th></tr>
-                        </thead>
-                        <tbody id="quotesTable">
-                            <tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No quotes yet</td></tr>
-                        </tbody>
+                        <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Product</th><th>Qty</th><th>Farm Type</th><th>Notes</th></tr></thead>
+                        <tbody id="quotes-tbody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Orders -->
-        <div class="content-section" id="orders">
+        <!-- ═══ ORDERS ═══════════════════════════════════════════════ -->
+        <div class="sec" id="tab-orders">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Orders</h3>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('addOrderModal')">+ Add Order</button>
+                <div class="card-h">
+                    <h3>Orders &nbsp;<span id="o-count" class="badge bg-blue">0</span></h3>
+                    <button class="btn btn-primary btn-sm" onclick="openOrderModal()">+ Add Order</button>
                 </div>
-                <div class="table-wrapper">
+                <p style="font-size:.84rem;color:var(--light);margin-bottom:1rem;">Record and track customer orders manually.</p>
+                <div class="tw">
                     <table>
-                        <thead>
-                            <tr><th>Date</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody id="ordersTable">
-                            <tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No orders yet</td></tr>
-                        </tbody>
+                        <thead><tr><th>Date</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="orders-tbody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Content Editor -->
-        <div class="content-section" id="content">
+        <!-- ═══ CONTENT EDITOR ═══════════════════════════════════════ -->
+        <div class="sec" id="tab-content">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Website Content</h3>
-                    <button class="btn btn-primary btn-sm" onclick="saveContent()">Save Content</button>
+                <div class="card-h">
+                    <h3>Website Content Editor</h3>
+                    <button class="btn btn-primary btn-sm" onclick="saveContent()">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Save Content
+                    </button>
+                </div>
+                <p style="font-size:.84rem;color:var(--light);margin-bottom:1.4rem;">Edit the text and contact details shown on the public website. After saving, refresh the website to see your changes.</p>
+
+                <div class="sp">
+                    <h4>🏠 Hero Section</h4>
+                    <div class="frow">
+                        <div class="fg"><label>Farm Name</label><input class="fc" type="text" id="c-farmName" placeholder="Country Farm Matugga"></div>
+                        <div class="fg"><label>Hero Title</label><input class="fc" type="text" id="c-heroTitle" placeholder="Premium Day-Old Chicks"></div>
+                    </div>
+                    <div class="fg"><label>Hero Subtitle</label><input class="fc" type="text" id="c-heroSubtitle" placeholder="Quality Poultry for Your Farm…"></div>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">🏠 Hero Section</div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Farm Name</label>
-                            <input type="text" class="form-control" id="c_farmName" placeholder="Country Farm Matugga">
-                        </div>
-                        <div class="form-group">
-                            <label>Hero Title</label>
-                            <input type="text" class="form-control" id="c_heroTitle" placeholder="Premium Day-Old Chicks">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Hero Subtitle</label>
-                        <input type="text" class="form-control" id="c_heroSubtitle">
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">📊 Stats</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Years Experience</label><input type="text" class="form-control" id="c_statsYears"></div>
-                        <div class="form-group"><label>Chicks Delivered</label><input type="text" class="form-control" id="c_statsChicks"></div>
-                        <div class="form-group"><label>Survival Rate</label><input type="text" class="form-control" id="c_statsSurvival"></div>
-                        <div class="form-group"><label>Happy Farmers</label><input type="text" class="form-control" id="c_statsFarmers"></div>
+                <div class="sp">
+                    <h4>📊 Statistics</h4>
+                    <div class="frow">
+                        <div class="fg"><label>Years Experience</label><input class="fc" type="text" id="c-statsYears" placeholder="15+"></div>
+                        <div class="fg"><label>Chicks Delivered</label><input class="fc" type="text" id="c-statsChicks" placeholder="500K+"></div>
+                        <div class="fg"><label>Survival Rate</label><input class="fc" type="text" id="c-statsSurvival" placeholder="95%"></div>
+                        <div class="fg"><label>Happy Farmers</label><input class="fc" type="text" id="c-statsFarmers" placeholder="2,000+"></div>
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">ℹ️ About Section</div>
-                    <div class="form-group"><label>Paragraph 1</label><textarea class="form-control" id="c_aboutPara1"></textarea></div>
-                    <div class="form-group"><label>Paragraph 2</label><textarea class="form-control" id="c_aboutPara2"></textarea></div>
-                    <div class="form-group"><label>Paragraph 3</label><textarea class="form-control" id="c_aboutPara3"></textarea></div>
+                <div class="sp">
+                    <h4>ℹ️ About Section</h4>
+                    <div class="fg"><label>Paragraph 1</label><textarea class="fc" id="c-about1"></textarea></div>
+                    <div class="fg"><label>Paragraph 2</label><textarea class="fc" id="c-about2"></textarea></div>
+                    <div class="fg"><label>Paragraph 3</label><textarea class="fc" id="c-about3"></textarea></div>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">📍 Contact Details</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Address</label><input type="text" class="form-control" id="c_contactAddress"></div>
-                        <div class="form-group"><label>Phone</label><input type="text" class="form-control" id="c_contactPhone"></div>
-                        <div class="form-group"><label>Email</label><input type="email" class="form-control" id="c_contactEmail"></div>
-                        <div class="form-group"><label>WhatsApp Number</label><input type="text" class="form-control" id="c_contactWhatsApp" placeholder="256700000000"></div>
+                <div class="sp">
+                    <h4>📍 Contact Details</h4>
+                    <div class="frow">
+                        <div class="fg"><label>Address</label><input class="fc" type="text" id="c-addr" placeholder="Matugga, Uganda"></div>
+                        <div class="fg"><label>Phone</label><input class="fc" type="tel" id="c-phone" placeholder="+256 700 000 000"></div>
+                        <div class="fg"><label>Email</label><input class="fc" type="email" id="c-email" placeholder="info@countryfarmmatugga.com"></div>
+                        <div class="fg"><label>WhatsApp <span class="hint">digits only e.g. 256700000000</span></label><input class="fc" type="text" id="c-wa" placeholder="256700000000"></div>
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">🔗 Social Links</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Facebook URL</label><input type="url" class="form-control" id="c_socialFacebook"></div>
-                        <div class="form-group"><label>Instagram URL</label><input type="url" class="form-control" id="c_socialInstagram"></div>
-                        <div class="form-group"><label>Twitter/X URL</label><input type="url" class="form-control" id="c_socialTwitter"></div>
+                <div class="sp">
+                    <h4>🔗 Social Media Links</h4>
+                    <div class="frow">
+                        <div class="fg"><label>Facebook URL</label><input class="fc" type="url" id="c-fb" placeholder="https://facebook.com/…"></div>
+                        <div class="fg"><label>Instagram URL</label><input class="fc" type="url" id="c-ig" placeholder="https://instagram.com/…"></div>
+                        <div class="fg"><label>Twitter / X URL</label><input class="fc" type="url" id="c-tw" placeholder="https://twitter.com/…"></div>
                     </div>
                 </div>
+
+                <button class="btn btn-primary" onclick="saveContent()">Save All Content Changes</button>
             </div>
         </div>
 
-        <!-- Products -->
-        <div class="content-section" id="products">
+        <!-- ═══ PRODUCTS ═════════════════════════════════════════════ -->
+        <div class="sec" id="tab-products">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Product Management</h3>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('addProductModal')">+ Add Product</button>
+                <div class="card-h">
+                    <h3>Products</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openProdModal()">+ Add Product</button>
                 </div>
-                <div id="productsList"></div>
+                <p style="font-size:.84rem;color:var(--light);margin-bottom:1.1rem;">Products appear on the website's Products section. Edits are reflected immediately after saving.</p>
+                <div id="prod-list"></div>
             </div>
         </div>
 
-        <!-- ===== VIDEOS ===== -->
-        <div class="content-section" id="videos">
+        <!-- ═══ VIDEOS ═══════════════════════════════════════════════ -->
+        <div class="sec" id="tab-videos">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">🎬 Video Management</h3>
-                    <div style="display:flex;gap:0.5rem;">
-                        <button class="btn btn-secondary btn-sm" onclick="saveVideos()">Save Videos</button>
+                <div class="card-h">
+                    <h3>🎬 Video Management</h3>
+                    <div style="display:flex;gap:.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="saveVideos()">Save Videos</button>
                         <button class="btn btn-ghost btn-sm" onclick="resetVideos()">Reset</button>
                     </div>
                 </div>
-                <p style="color:#718096;font-size:0.9rem;margin-bottom:1.5rem;">
-                    Manage the three video slots displayed on the website. Paste a publicly accessible MP4 URL or a direct link to your hosted video file.
-                </p>
-                <div class="video-list" id="videosList">
-                    <!-- Rendered by JS -->
+                <div style="background:#eff8f0;border-radius:8px;padding:.9rem 1rem;margin-bottom:1.2rem;font-size:.83rem;color:var(--green);">
+                    <strong>💡 How to add videos:</strong> Upload your .mp4 to Google Drive, Dropbox, or your web server. Set sharing to "Anyone with the link", then paste the direct file URL below. Thumbnail image URL is optional.
                 </div>
-                <div style="margin-top:1.5rem;padding:1rem;background:#f0f9f4;border-radius:8px;font-size:0.85rem;color:#2d5016;">
-                    <strong>💡 Tip:</strong> Upload your video files to Google Drive, Dropbox, or your web server and paste the direct MP4 URL here. Videos are lazy-loaded on the website for fast page speed.
-                </div>
+                <div id="vid-list"></div>
+                <button class="btn btn-primary" style="margin-top:.8rem;" onclick="saveVideos()">Save All Videos</button>
             </div>
         </div>
 
-        <!-- Settings -->
-        <div class="content-section" id="settings">
+        <!-- ═══ SETTINGS ═════════════════════════════════════════════ -->
+        <div class="sec" id="tab-settings">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Admin Account Settings</h3>
-                </div>
+                <div class="card-h"><h3>Account Settings</h3></div>
 
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                        Update Admin Email
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Current Email</label>
-                            <input type="email" class="form-control" id="currentEmailDisplay" readonly style="background:#f0f0f0;">
-                        </div>
-                        <div class="form-group">
-                            <label>New Email Address</label>
-                            <input type="email" class="form-control" id="newAdminEmail" placeholder="new@email.com">
-                        </div>
+                <div class="sp">
+                    <h4>
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Change Admin Email
+                    </h4>
+                    <div class="frow">
+                        <div class="fg"><label>Current Email</label><input class="fc" type="email" id="s-curEmail" readonly></div>
+                        <div class="fg"><label>New Email Address</label><input class="fc" type="email" id="s-newEmail" placeholder="newemail@domain.com"></div>
                     </div>
                     <button class="btn btn-primary btn-sm" onclick="updateEmail()">Update Email</button>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <div class="sp">
+                    <h4>
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         Change Password
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" placeholder="Current password">
-                        </div>
-                        <div class="form-group">
-                            <label>New Password</label>
-                            <input type="password" class="form-control" id="newPassword" placeholder="New password (min. 8 chars)">
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
-                        </div>
+                    </h4>
+                    <div class="frow">
+                        <div class="fg"><label>Current Password</label><input class="fc" type="password" id="s-curPw" placeholder="Enter current password"></div>
+                        <div class="fg"><label>New Password <span class="hint">min. 8 chars</span></label><input class="fc" type="password" id="s-newPw" placeholder="New password"></div>
+                        <div class="fg"><label>Confirm New Password</label><input class="fc" type="password" id="s-confPw" placeholder="Confirm new password"></div>
                     </div>
                     <button class="btn btn-primary btn-sm" onclick="updatePassword()">Update Password</button>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title" style="color:#991b1b;">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div class="sp danger">
+                    <h4>
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         Danger Zone
-                    </div>
-                    <p style="font-size:0.9rem;color:#718096;margin-bottom:1rem;">Clear all locally stored data. This will remove all quotes, orders, products and content from this browser.</p>
-                    <button class="btn btn-danger btn-sm" onclick="if(confirm('Clear ALL data? This cannot be undone.')) clearAllData()">Clear All Data</button>
+                    </h4>
+                    <p style="font-size:.85rem;color:var(--light);margin-bottom:.9rem;">Clears all stored data from this browser — quotes, orders, products, videos and content. Cannot be undone.</p>
+                    <button class="btn btn-danger btn-sm" onclick="nukAllData()">Clear All Data</button>
                 </div>
             </div>
         </div>
 
-    </div><!-- /main-content -->
-</div><!-- /admin-container -->
+    </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
 
-<!-- Add Product Modal -->
-<div class="modal" id="addProductModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Add / Edit Product</h2>
-            <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+<!-- ══ PRODUCT MODAL ══════════════════════════════════════════════ -->
+<div class="modal" id="modal-prod">
+    <div class="mbox">
+        <div class="mhead">
+            <h3 id="prod-modal-title">Add Product</h3>
+            <button class="mclose" onclick="closeModal('modal-prod')">✕</button>
         </div>
-        <div class="modal-body">
-            <input type="hidden" id="editProductId">
-            <div class="form-group"><label>Product Name</label><input type="text" class="form-control" id="pName"></div>
-            <div class="form-group"><label>Description</label><textarea class="form-control" id="pDesc"></textarea></div>
-            <div class="form-group"><label>Price (UGX)</label><input type="number" class="form-control" id="pPrice"></div>
-            <div class="form-group"><label>Image URL</label><input type="url" class="form-control" id="pImage"></div>
-            <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+        <div class="mbody">
+            <input type="hidden" id="p-id">
+            <div class="fg"><label>Product Name *</label><input class="fc" type="text" id="p-name" placeholder="e.g. Broiler Day-Old Chicks"></div>
+            <div class="fg"><label>Description *</label><textarea class="fc" id="p-desc" placeholder="Brief product description shown on the website…"></textarea></div>
+            <div class="frow">
+                <div class="fg"><label>Price (UGX) *</label><input class="fc" type="number" id="p-price" min="0" placeholder="3500"></div>
+                <div class="fg"><label>Image URL <span class="hint">optional</span></label><input class="fc" type="url" id="p-img" placeholder="https://…/image.jpg"></div>
+            </div>
+            <div class="img-pre" id="p-preview"><img id="p-preview-img" alt="Preview"></div>
+            <div style="display:flex;gap:.6rem;margin-top:.4rem;">
+                <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+                <button class="btn btn-ghost" onclick="closeModal('modal-prod')">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Add Order Modal -->
-<div class="modal" id="addOrderModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Add Order</h2>
-            <button class="modal-close" onclick="closeModal('addOrderModal')">✕</button>
+<!-- ══ ORDER MODAL ════════════════════════════════════════════════ -->
+<div class="modal" id="modal-order">
+    <div class="mbox">
+        <div class="mhead">
+            <h3 id="order-modal-title">Add Order</h3>
+            <button class="mclose" onclick="closeModal('modal-order')">✕</button>
         </div>
-        <div class="modal-body">
-            <div class="form-grid">
-                <div class="form-group"><label>Customer Name</label><input type="text" class="form-control" id="oName"></div>
-                <div class="form-group"><label>Product</label><input type="text" class="form-control" id="oProduct"></div>
-                <div class="form-group"><label>Quantity</label><input type="number" class="form-control" id="oQty"></div>
-                <div class="form-group"><label>Amount (UGX)</label><input type="number" class="form-control" id="oAmount"></div>
+        <div class="mbody">
+            <input type="hidden" id="o-id">
+            <div class="frow">
+                <div class="fg"><label>Customer Name *</label><input class="fc" type="text" id="o-name" placeholder="John Mukasa"></div>
+                <div class="fg"><label>Phone</label><input class="fc" type="tel" id="o-phone" placeholder="+256 700 000 000"></div>
             </div>
-            <div class="form-group">
-                <label>Status</label>
-                <select class="form-control" id="oStatus">
-                    <option value="Pending">Pending</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
+            <div class="frow">
+                <div class="fg"><label>Product *</label><input class="fc" type="text" id="o-prod" placeholder="Broiler Day-Old Chicks"></div>
+                <div class="fg"><label>Quantity *</label><input class="fc" type="number" id="o-qty" min="1" placeholder="100"></div>
             </div>
-            <button class="btn btn-primary" onclick="saveOrder()">Save Order</button>
+            <div class="frow">
+                <div class="fg"><label>Amount (UGX)</label><input class="fc" type="number" id="o-amt" min="0" placeholder="350000"></div>
+                <div class="fg"><label>Status</label>
+                    <select class="fc" id="o-status">
+                        <option>Pending</option><option>Processing</option>
+                        <option>Delivered</option><option>Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="fg"><label>Notes</label><textarea class="fc" id="o-notes" placeholder="Any extra details…"></textarea></div>
+            <div style="display:flex;gap:.6rem;">
+                <button class="btn btn-primary" onclick="saveOrder()">Save Order</button>
+                <button class="btn btn-ghost" onclick="closeModal('modal-order')">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
+<!-- ══ TOAST ══════════════════════════════════════════════════════ -->
 <div class="toast" id="toast">
-    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-    <span id="toastMessage"></span>
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toast-msg"></span>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // ===== AUTH CHECK =====
-    (function() {
-        const auth = sessionStorage.getItem('adminAuth');
-        if (!auth) {
-            window.location.href = 'admin-login.html';
-        }
-    })();
+<!-- ══ JAVASCRIPT ════════════════════════════════════════════════ -->
+<script>
+'use strict';
 
-    // ===== HELPERS =====
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        toast.className = `toast ${type} active`;
-        document.getElementById('toastMessage').textContent = message;
-        setTimeout(() => toast.classList.remove('active'), 3500);
-    }
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function saveAllChanges() { saveContent(); saveVideos(); showToast('All changes saved!', 'success'); }
+/* ── CONSTANTS ──────────────────────────── */
+var DEF_EMAIL = 'admin@cfm.com';
+var DEF_PASS  = 'Passw0rd';
 
-    // ===== NAVIGATION =====
-    const sectionTitles = {
-        dashboard: 'Dashboard', quotes: 'Quote Requests', orders: 'Orders',
-        content: 'Website Content', products: 'Product Management',
-        videos: 'Video Management', settings: 'Account Settings'
-    };
-    document.querySelectorAll('.menu-item[data-section]').forEach(item => {
-        item.addEventListener('click', function() {
-            const sec = this.dataset.section;
-            if (sec === 'logout') { logout(); return; }
-            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(sec);
-            if (target) target.classList.add('active');
-            document.getElementById('pageTitle').textContent = sectionTitles[sec] || 'Dashboard';
-            if (sec === 'videos') renderVideoEditor();
-            if (sec === 'products') renderProductsList();
-            if (sec === 'quotes') renderQuotes();
-            if (sec === 'orders') renderOrders();
-            if (sec === 'settings') {
-                document.getElementById('currentEmailDisplay').value = localStorage.getItem('adminEmail') || 'admin@cfm.com';
-            }
-        });
+var DEF_PRODUCTS = [
+    { id:1, name:'Broiler Day-Old Chicks',  description:'Fast-growing, high-quality broiler chicks from certified breeds. Ready for market in 6 weeks.',  price:3500, image:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=75' },
+    { id:2, name:'Layer Day-Old Chicks',    description:'Premium layer breeds with excellent egg production rates — up to 300 eggs per year per bird.',    price:4200, image:'https://images.unsplash.com/photo-1612170153139-6f881ff067e0?w=400&q=75' },
+    { id:3, name:'Kuroiler Chicks',         description:'Hardy dual-purpose Kuroiler breed for both meat and egg production, ideal for Uganda\'s climate.', price:5000, image:'https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=400&q=75' }
+];
+
+var DEF_VIDEOS = [
+    { id:1, title:'Our Brooding House',      description:'See how we maintain ideal temperature and humidity for our day-old chicks from day one.',            category:'Facility Tour',     src:'', thumbnail:'' },
+    { id:2, title:'Chick Quality Standards', description:'Watch our quality control process — every chick is checked for health and strength before dispatch.', category:'Quality Assurance', src:'', thumbnail:'' },
+    { id:3, title:'Farm Life at Matugga',    description:'A full day on the farm: hatchery, feeding, health checks, and delivery — see the care we put in.',   category:'Farm Life',         src:'', thumbnail:'' }
+];
+
+var VID_CATS = ['Facility Tour','Quality Assurance','Farm Life','Breeding','Feeding','Health & Vet','Delivery','Other'];
+
+var TAB_TITLES = {
+    dashboard:'Dashboard', quotes:'Quotations', orders:'Orders',
+    content:'Website Content', products:'Product Management',
+    videos:'Video Management', settings:'Account Settings'
+};
+
+/* ── HELPERS ────────────────────────────── */
+function $id(id) { return document.getElementById(id); }
+function gv(id)  { var el = $id(id); return el ? el.value.trim() : ''; }
+function sv(id, v){ var el = $id(id); if (el) el.value = v || ''; }
+
+function toast(msg, type) {
+    var t = $id('toast');
+    $id('toast-msg').textContent = msg;
+    t.className = 'toast show' + (type ? ' ' + type : '');
+    clearTimeout(t._tid);
+    t._tid = setTimeout(function(){ t.classList.remove('show'); }, 3600);
+}
+
+function openModal(id)  { var m = $id(id); if (m) { m.classList.add('open');  document.body.style.overflow='hidden'; } }
+function closeModal(id) { var m = $id(id); if (m) { m.classList.remove('open'); document.body.style.overflow=''; } }
+
+function safeDate(iso) {
+    try { return new Date(iso).toLocaleDateString('en-UG',{day:'2-digit',month:'short',year:'numeric'}); }
+    catch(e){ return iso || '—'; }
+}
+
+function esc(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── DATA ───────────────────────────────── */
+function getProducts(){ return JSON.parse(localStorage.getItem('farmProducts') || 'null') || DEF_PRODUCTS; }
+function getVideos()  { return JSON.parse(localStorage.getItem('farmVideos')   || 'null') || DEF_VIDEOS; }
+function getOrders()  { return JSON.parse(localStorage.getItem('farmOrders')   || '[]'); }
+function getQuotes()  { return JSON.parse(localStorage.getItem('farmQuotes')   || '[]'); }
+
+/* ── NAVIGATION ─────────────────────────── */
+var currentTab = 'dashboard';
+
+function goTab(tab) {
+    // Deactivate all menu items
+    document.querySelectorAll('.sb-item[data-tab]').forEach(function(el){
+        el.classList.toggle('active', el.getAttribute('data-tab') === tab);
     });
 
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            sessionStorage.removeItem('adminAuth');
-            window.location.href = 'admin-login.html';
-        }
+    // Deactivate all sections
+    document.querySelectorAll('.sec').forEach(function(el){
+        el.classList.remove('active');
+    });
+
+    // Activate target section
+    var target = $id('tab-' + tab);
+    if (!target) {
+        console.warn('Section not found: tab-' + tab);
+        toast('Navigation error: section "' + tab + '" not found', 'err');
+        return;
+    }
+    target.classList.add('active');
+
+    // Update page title
+    $id('pageTitle').textContent = TAB_TITLES[tab] || tab;
+    currentTab = tab;
+
+    // Render section data — each wrapped in try/catch so one failure
+    // never prevents other tabs from working
+    try {
+        if (tab === 'dashboard') renderDashboard();
+        if (tab === 'quotes')    renderQuotes();
+        if (tab === 'orders')    renderOrders();
+        if (tab === 'content')   loadContentFields();
+        if (tab === 'products')  renderProducts();
+        if (tab === 'videos')    renderVideos();
+        if (tab === 'settings')  loadSettings();
+    } catch(err) {
+        console.error('Error rendering tab "' + tab + '":', err);
+        toast('Error loading section. Check console for details.', 'err');
+    }
+}
+
+// Wire sidebar clicks
+document.querySelectorAll('.sb-item[data-tab]').forEach(function(el){
+    el.addEventListener('click', function(){ goTab(this.getAttribute('data-tab')); });
+});
+
+// Logout
+$id('logoutBtn').addEventListener('click', function(){
+    if (confirm('Log out of the admin panel?')) {
+        localStorage.removeItem('cfm_admin_auth');
+        window.location.href = 'admin-login.html';
+    }
+});
+
+// Close modal on backdrop
+document.querySelectorAll('.modal').forEach(function(m){
+    m.addEventListener('click', function(e){ if (e.target === m) closeModal(m.id); });
+});
+
+/* ── SAVE CURRENT SECTION ───────────────── */
+function saveCurrentSection() {
+    if (currentTab === 'content')  { saveContent(); return; }
+    if (currentTab === 'videos')   { saveVideos();  return; }
+    if (currentTab === 'products') { toast('Use "+ Add Product" or "Edit" to save products', 'warn'); return; }
+    if (currentTab === 'orders')   { toast('Use "+ Add Order" to save orders', 'warn'); return; }
+    if (currentTab === 'settings') { toast('Use the individual Save buttons in Settings', 'warn'); return; }
+    toast('Nothing to save on this page', 'warn');
+}
+
+/* ── DASHBOARD ──────────────────────────── */
+function renderDashboard() {
+    var quotes   = getQuotes();
+    var orders   = getOrders();
+    var products = getProducts();
+    var videos   = getVideos().filter(function(v){ return v.src; });
+
+    $id('st-quotes').textContent   = quotes.length;
+    $id('st-orders').textContent   = orders.length;
+    $id('st-products').textContent = products.length;
+    $id('st-videos').textContent   = videos.length;
+
+    var recent = quotes.slice().reverse().slice(0, 5);
+    $id('dash-quotes').innerHTML = recent.length
+        ? recent.map(function(q){ return '<tr><td>'+safeDate(q.date)+'</td><td><strong>'+esc(q.name||'—')+'</strong></td><td>'+esc(q.product||'—')+'</td><td>'+esc(q.quantity||'—')+'</td><td>'+esc(q.phone||'—')+'</td></tr>'; }).join('')
+        : '<tr class="empty"><td colspan="5">No quote requests yet. They appear here when visitors submit the form on the website.</td></tr>';
+}
+
+/* ── QUOTATIONS ─────────────────────────── */
+function renderQuotes() {
+    var quotes = getQuotes();
+    $id('q-count').textContent = quotes.length;
+    $id('quotes-tbody').innerHTML = quotes.length
+        ? quotes.slice().reverse().map(function(q){
+            return '<tr>'
+                + '<td>'+safeDate(q.date)+'</td>'
+                + '<td><strong>'+esc(q.name||'—')+'</strong></td>'
+                + '<td>'+esc(q.email||'—')+'</td>'
+                + '<td>'+esc(q.phone||'—')+'</td>'
+                + '<td>'+esc(q.product||'—')+'</td>'
+                + '<td>'+esc(q.quantity||'—')+'</td>'
+                + '<td>'+esc(q.farmType||'—')+'</td>'
+                + '<td style="max-width:140px;font-size:.8rem;">'+esc(q.requirements||'—')+'</td>'
+                + '</tr>';
+          }).join('')
+        : '<tr class="empty"><td colspan="8">No quote requests yet.</td></tr>';
+}
+
+function clearQuotes() {
+    if (!confirm('Delete ALL quote requests? This cannot be undone.')) return;
+    localStorage.removeItem('farmQuotes');
+    renderQuotes();
+    renderDashboard();
+    toast('All quotes cleared', 'warn');
+}
+
+/* ── ORDERS ─────────────────────────────── */
+function renderOrders() {
+    var orders = getOrders();
+    $id('o-count').textContent = orders.length;
+    $id('orders-tbody').innerHTML = orders.length
+        ? orders.slice().reverse().map(function(o){
+            var bc = o.status==='Delivered'  ? 'bg-green'
+                   : o.status==='Cancelled'   ? 'bg-red'
+                   : o.status==='Processing'  ? 'bg-blue'
+                   : 'bg-yellow';
+            return '<tr>'
+                + '<td>'+safeDate(o.date)+'</td>'
+                + '<td><strong>'+esc(o.name)+'</strong>'+(o.phone?'<br><span style="font-size:.78rem;color:var(--light);">'+esc(o.phone)+'</span>':'')+'</td>'
+                + '<td>'+esc(o.product)+'</td>'
+                + '<td>'+esc(o.qty)+'</td>'
+                + '<td>UGX '+parseInt(o.amount||0).toLocaleString()+'</td>'
+                + '<td><span class="badge '+bc+'">'+esc(o.status)+'</span></td>'
+                + '<td style="display:flex;gap:.35rem;flex-wrap:wrap;">'
+                    + '<button class="btn btn-ghost btn-sm" onclick="editOrder('+o.id+')">Edit</button>'
+                    + '<button class="btn btn-danger btn-sm" onclick="deleteOrder('+o.id+')">Delete</button>'
+                + '</td>'
+                + '</tr>';
+          }).join('')
+        : '<tr class="empty"><td colspan="7">No orders yet. Use "+ Add Order" to record one manually.</td></tr>';
+}
+
+function openOrderModal() {
+    $id('order-modal-title').textContent = 'Add Order';
+    sv('o-id',''); sv('o-name',''); sv('o-phone','');
+    sv('o-prod',''); sv('o-qty',''); sv('o-amt','');
+    sv('o-notes',''); $id('o-status').value = 'Pending';
+    openModal('modal-order');
+}
+
+function editOrder(id) {
+    var o = getOrders().find(function(x){ return x.id === id; });
+    if (!o) return;
+    $id('order-modal-title').textContent = 'Edit Order';
+    sv('o-id', id); sv('o-name', o.name); sv('o-phone', o.phone);
+    sv('o-prod', o.product); sv('o-qty', o.qty); sv('o-amt', o.amount);
+    sv('o-notes', o.notes); $id('o-status').value = o.status || 'Pending';
+    openModal('modal-order');
+}
+
+function saveOrder() {
+    var name = gv('o-name'), prod = gv('o-prod'), qty = gv('o-qty');
+    if (!name || !prod || !qty) { toast('Name, Product and Quantity are required', 'err'); return; }
+
+    var orders = getOrders();
+    var editId = parseInt(gv('o-id')) || 0;
+    var existing = editId ? orders.find(function(x){ return x.id===editId; }) : null;
+
+    var entry = {
+        id:      editId || Date.now(),
+        date:    existing ? existing.date : new Date().toISOString(),
+        name:    name,    phone:   gv('o-phone'),
+        product: prod,    qty:     qty,
+        amount:  gv('o-amt'),
+        status:  $id('o-status').value,
+        notes:   gv('o-notes')
+    };
+
+    if (editId) {
+        var idx = orders.findIndex(function(x){ return x.id===editId; });
+        if (idx > -1) orders[idx] = entry; else orders.push(entry);
+    } else {
+        orders.push(entry);
+    }
+    localStorage.setItem('farmOrders', JSON.stringify(orders));
+    closeModal('modal-order');
+    renderOrders();
+    toast(editId ? 'Order updated!' : 'Order saved!');
+}
+
+function deleteOrder(id) {
+    if (!confirm('Delete this order?')) return;
+    localStorage.setItem('farmOrders', JSON.stringify(getOrders().filter(function(o){ return o.id!==id; })));
+    renderOrders();
+    toast('Order deleted', 'warn');
+}
+
+/* ── WEBSITE CONTENT ────────────────────── */
+function loadContentFields() {
+    var c = JSON.parse(localStorage.getItem('websiteContent') || '{}');
+    sv('c-farmName',    c.farmName    || 'Country Farm Matugga');
+    sv('c-heroTitle',   c.heroTitle   || 'Premium Day-Old Chicks');
+    sv('c-heroSubtitle',c.heroSubtitle|| 'Quality Poultry for Your Farm — Healthy, Strong & Productive');
+    sv('c-statsYears',  c.statsYears  || '15+');
+    sv('c-statsChicks', c.statsChicks || '500K+');
+    sv('c-statsSurvival',c.statsSurvival||'95%');
+    sv('c-statsFarmers',c.statsFarmers|| '2,000+');
+    sv('c-about1', c.aboutPara1 || '');
+    sv('c-about2', c.aboutPara2 || '');
+    sv('c-about3', c.aboutPara3 || '');
+    sv('c-addr',  c.contactAddress  || 'Matugga, Uganda');
+    sv('c-phone', c.contactPhone    || '+256 700 000 000');
+    sv('c-email', c.contactEmail    || 'info@countryfarmmatugga.com');
+    sv('c-wa',    c.contactWhatsApp || '256700000000');
+    sv('c-fb',    c.socialFacebook  || '');
+    sv('c-ig',    c.socialInstagram || '');
+    sv('c-tw',    c.socialTwitter   || '');
+}
+
+function saveContent() {
+    var c = {
+        farmName:        gv('c-farmName'),
+        heroTitle:       gv('c-heroTitle'),
+        heroSubtitle:    gv('c-heroSubtitle'),
+        statsYears:      gv('c-statsYears'),
+        statsChicks:     gv('c-statsChicks'),
+        statsSurvival:   gv('c-statsSurvival'),
+        statsFarmers:    gv('c-statsFarmers'),
+        aboutPara1:      ($id('c-about1')||{}).value || '',
+        aboutPara2:      ($id('c-about2')||{}).value || '',
+        aboutPara3:      ($id('c-about3')||{}).value || '',
+        contactAddress:  gv('c-addr'),
+        contactPhone:    gv('c-phone'),
+        contactEmail:    gv('c-email'),
+        contactWhatsApp: gv('c-wa'),
+        socialFacebook:  gv('c-fb'),
+        socialInstagram: gv('c-ig'),
+        socialTwitter:   gv('c-tw')
+    };
+    localStorage.setItem('websiteContent', JSON.stringify(c));
+    toast('✅ Content saved! Reload the website to see your changes.');
+}
+
+/* ── PRODUCTS ───────────────────────────── */
+function renderProducts() {
+    var products = getProducts();
+    $id('st-products').textContent = products.length;
+
+    if (!products.length) {
+        $id('prod-list').innerHTML = '<p style="text-align:center;color:var(--light);padding:2rem;">No products. Click "+ Add Product" to add one.</p>';
+        return;
     }
 
-    // ===== CREDENTIALS =====
-    function updateEmail() {
-        const newEmail = document.getElementById('newAdminEmail').value.trim();
-        if (!newEmail || !newEmail.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
-        localStorage.setItem('adminEmail', newEmail);
-        document.getElementById('currentEmailDisplay').value = newEmail;
-        document.getElementById('adminEmailDisplay').textContent = newEmail;
-        document.getElementById('newAdminEmail').value = '';
-        showToast('Email updated successfully!');
-    }
+    var rows = products.map(function(p){
+        return '<tr>'
+            + '<td><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" style="width:52px;height:38px;object-fit:cover;border-radius:6px;background:#eee;" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 52 38\\\'%3E%3Crect fill=\\\'%23e2e8f0\\\' width=\\\'52\\\' height=\\\'38\\\'/%3E%3C/svg%3E\'"></td>'
+            + '<td><strong>'+esc(p.name)+'</strong></td>'
+            + '<td style="max-width:240px;font-size:.83rem;color:var(--mid);">'+esc(p.description)+'</td>'
+            + '<td>UGX '+Number(p.price).toLocaleString()+'</td>'
+            + '<td style="display:flex;gap:.35rem;">'
+                + '<button class="btn btn-ghost btn-sm" onclick="editProduct('+p.id+')">Edit</button>'
+                + '<button class="btn btn-danger btn-sm" onclick="deleteProduct('+p.id+')">Delete</button>'
+            + '</td>'
+            + '</tr>';
+    }).join('');
 
-    function updatePassword() {
-        const current = document.getElementById('currentPassword').value;
-        const newPw = document.getElementById('newPassword').value;
-        const confirm = document.getElementById('confirmPassword').value;
-        const stored = localStorage.getItem('adminPassword') || 'Passw0rd';
-        if (current !== stored) { showToast('Current password is incorrect', 'error'); return; }
-        if (newPw.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
-        if (newPw !== confirm) { showToast('Passwords do not match', 'error'); return; }
-        localStorage.setItem('adminPassword', newPw);
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('confirmPassword').value = '';
-        showToast('Password updated successfully!');
-    }
+    $id('prod-list').innerHTML = '<div class="tw"><table><thead><tr><th>Image</th><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
 
-    // ===== CONTENT =====
-    function loadContentFields() {
-        const c = JSON.parse(localStorage.getItem('websiteContent') || '{}');
-        document.getElementById('c_farmName').value = c.farmName || 'Country Farm Matugga';
-        document.getElementById('c_heroTitle').value = c.heroTitle || 'Premium Day-Old Chicks';
-        document.getElementById('c_heroSubtitle').value = c.heroSubtitle || '';
-        document.getElementById('c_statsYears').value = c.statsYears || '15+';
-        document.getElementById('c_statsChicks').value = c.statsChicks || '500K+';
-        document.getElementById('c_statsSurvival').value = c.statsSurvival || '95%';
-        document.getElementById('c_statsFarmers').value = c.statsFarmers || '2,000+';
-        document.getElementById('c_aboutPara1').value = c.aboutPara1 || '';
-        document.getElementById('c_aboutPara2').value = c.aboutPara2 || '';
-        document.getElementById('c_aboutPara3').value = c.aboutPara3 || '';
-        document.getElementById('c_contactAddress').value = c.contactAddress || 'Matugga, Uganda';
-        document.getElementById('c_contactPhone').value = c.contactPhone || '+256 700 000 000';
-        document.getElementById('c_contactEmail').value = c.contactEmail || 'info@countryfarmmatugga.com';
-        document.getElementById('c_contactWhatsApp').value = c.contactWhatsApp || '256700000000';
-        document.getElementById('c_socialFacebook').value = c.socialFacebook || '';
-        document.getElementById('c_socialInstagram').value = c.socialInstagram || '';
-        document.getElementById('c_socialTwitter').value = c.socialTwitter || '';
+function openProdModal() {
+    $id('prod-modal-title').textContent = 'Add Product';
+    sv('p-id',''); sv('p-name',''); sv('p-desc','');
+    sv('p-price',''); sv('p-img','');
+    $id('p-preview').style.display = 'none';
+    openModal('modal-prod');
+}
+
+function editProduct(id) {
+    var p = getProducts().find(function(x){ return x.id===id; });
+    if (!p) return;
+    $id('prod-modal-title').textContent = 'Edit Product';
+    sv('p-id',    id);
+    sv('p-name',  p.name);
+    sv('p-desc',  p.description);
+    sv('p-price', p.price);
+    sv('p-img',   p.image);
+    showProdPreview(p.image);
+    openModal('modal-prod');
+}
+
+function showProdPreview(url) {
+    var wrap = $id('p-preview'), img = $id('p-preview-img');
+    if (url && url.match(/^https?:\/\//)) {
+        img.src = url; wrap.style.display = 'block';
+    } else {
+        wrap.style.display = 'none';
     }
-    function saveContent() {
-        const c = {
-            farmName: document.getElementById('c_farmName').value,
-            heroTitle: document.getElementById('c_heroTitle').value,
-            heroSubtitle: document.getElementById('c_heroSubtitle').value,
-            statsYears: document.getElementById('c_statsYears').value,
-            statsChicks: document.getElementById('c_statsChicks').value,
-            statsSurvival: document.getElementById('c_statsSurvival').value,
-            statsFarmers: document.getElementById('c_statsFarmers').value,
-            aboutPara1: document.getElementById('c_aboutPara1').value,
-            aboutPara2: document.getElementById('c_aboutPara2').value,
-            aboutPara3: document.getElementById('c_aboutPara3').value,
-            contactAddress: document.getElementById('c_contactAddress').value,
-            contactPhone: document.getElementById('c_contactPhone').value,
-            contactEmail: document.getElementById('c_contactEmail').value,
-            contactWhatsApp: document.getElementById('c_contactWhatsApp').value,
-            socialFacebook: document.getElementById('c_socialFacebook').value,
-            socialInstagram: document.getElementById('c_socialInstagram').value,
-            socialTwitter: document.getElementById('c_socialTwitter').value,
+}
+
+$id('p-img').addEventListener('blur', function(){ showProdPreview(gv('p-img')); });
+
+function saveProduct() {
+    var name = gv('p-name'), desc = ($id('p-desc')||{}).value||'', price = parseFloat(gv('p-price'));
+    if (!name)       { toast('Product name is required', 'err'); return; }
+    if (!desc.trim()){ toast('Description is required', 'err'); return; }
+    if (isNaN(price)){ toast('Please enter a valid price', 'err'); return; }
+
+    var products = getProducts();
+    var editId   = parseInt(gv('p-id')) || 0;
+    var entry    = { id: editId || Date.now(), name: name, description: desc.trim(), price: price, image: gv('p-img') };
+
+    if (editId) {
+        var idx = products.findIndex(function(x){ return x.id===editId; });
+        if (idx > -1) products[idx] = entry; else products.push(entry);
+    } else {
+        products.push(entry);
+    }
+    localStorage.setItem('farmProducts', JSON.stringify(products));
+    closeModal('modal-prod');
+    renderProducts();
+    toast(editId ? 'Product updated!' : 'Product added!');
+}
+
+function deleteProduct(id) {
+    if (!confirm('Delete this product? It will be removed from the website.')) return;
+    localStorage.setItem('farmProducts', JSON.stringify(getProducts().filter(function(p){ return p.id!==id; })));
+    renderProducts();
+    toast('Product deleted', 'warn');
+}
+
+/* ── VIDEOS ─────────────────────────────── */
+function renderVideos() {
+    var videos = getVideos();
+    $id('vid-list').innerHTML = videos.map(function(v, i){
+        var catOptions = VID_CATS.map(function(c){
+            return '<option value="'+esc(c)+'"'+(v.category===c?' selected':'')+'>'+esc(c)+'</option>';
+        }).join('');
+
+        return '<div class="vslot">'
+            + '<div class="vnum">'+(i+1)+'</div>'
+            + '<div>'
+                + '<div class="vgrid">'
+                    + '<div class="fg"><label>Video Title *</label><input class="fc" type="text" id="vt'+i+'" value="'+esc(v.title)+'" placeholder="e.g. Farm Tour 2024"></div>'
+                    + '<div class="fg"><label>Category</label><select class="fc" id="vc'+i+'">'+catOptions+'</select></div>'
+                    + '<div class="fg full"><label>Video URL <span class="hint">— direct link to .mp4 file</span></label><input class="fc" type="url" id="vs'+i+'" value="'+esc(v.src)+'" placeholder="https://example.com/video.mp4"></div>'
+                    + '<div class="fg full"><label>Thumbnail URL <span class="hint">— optional preview image</span></label><input class="fc" type="url" id="vh'+i+'" value="'+esc(v.thumbnail)+'" placeholder="https://example.com/thumb.jpg"></div>'
+                    + '<div class="fg full"><label>Description</label><textarea class="fc" id="vd'+i+'" rows="2">'+esc(v.description)+'</textarea></div>'
+                + '</div>'
+                + '<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;">'
+                    + '<span class="vstatus '+(v.src?'vset':'vnone')+'">'+(v.src?'✓ Video Set':'⚠ No Video URL')+'</span>'
+                    + (v.src?'<a href="'+esc(v.src)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Preview ↗</a>':'')
+                + '</div>'
+            + '</div>'
+            + '</div>';
+    }).join('');
+}
+
+function saveVideos() {
+    var videos = getVideos().map(function(v, i){
+        return {
+            id:          v.id,
+            title:       ($id('vt'+i) ? $id('vt'+i).value.trim() : '') || v.title,
+            description: ($id('vd'+i) ? $id('vd'+i).value.trim() : '') || v.description,
+            category:    ($id('vc'+i) ? $id('vc'+i).value       : '') || v.category,
+            src:         ($id('vs'+i) ? $id('vs'+i).value.trim() : '') || '',
+            thumbnail:   ($id('vh'+i) ? $id('vh'+i).value.trim() : '') || ''
         };
-        localStorage.setItem('websiteContent', JSON.stringify(c));
-        showToast('Content saved!');
-    }
+    });
+    localStorage.setItem('farmVideos', JSON.stringify(videos));
+    var live = videos.filter(function(v){ return v.src; }).length;
+    $id('st-videos').textContent = live;
+    renderVideos(); // re-render to update status badges
+    toast('✅ Videos saved! ' + live + '/3 video' + (live!==1?'s':'') + ' live on website.');
+}
 
-    // ===== VIDEOS =====
-    const defaultVideos = [
-        { id: 1, title: 'Our Brooding House', description: 'See how we maintain ideal conditions for our day-old chicks in our state-of-the-art brooding facility.', category: 'Facility Tour', src: '', thumbnail: '' },
-        { id: 2, title: 'Chick Quality Standards', description: 'Watch our quality control process ensuring every chick meets our premium health and strength standards.', category: 'Quality Assurance', src: '', thumbnail: '' },
-        { id: 3, title: 'Farm Life at Matugga', description: 'A day in the life of our farm — from hatchery to delivery, see the care that goes into every batch.', category: 'Farm Life', src: '', thumbnail: '' }
-    ];
-    const videoCategories = ['Facility Tour','Quality Assurance','Farm Life','Breeding','Feeding','Health & Vet','Delivery','Other'];
+function resetVideos() {
+    if (!confirm('Reset all videos to defaults? This will clear all video URLs.')) return;
+    localStorage.removeItem('farmVideos');
+    renderVideos();
+    toast('Videos reset to defaults', 'warn');
+}
 
-    function getVideos() {
-        return JSON.parse(localStorage.getItem('farmVideos') || 'null') || defaultVideos;
-    }
+/* ── SETTINGS ───────────────────────────── */
+function loadSettings() {
+    var email = localStorage.getItem('cfm_admin_email') || DEF_EMAIL;
+    sv('s-curEmail', email);
+    $id('adminEmail').textContent = email;
+    sv('s-newEmail',''); sv('s-curPw',''); sv('s-newPw',''); sv('s-confPw','');
+}
 
-    function renderVideoEditor() {
-        const videos = getVideos();
-        const container = document.getElementById('videosList');
-        container.innerHTML = videos.map((v, i) => `
-            <div class="video-item">
-                <div class="video-number">${i + 1}</div>
-                <div class="video-fields">
-                    <div>
-                        <label>Video Title *</label>
-                        <input type="text" id="vTitle_${i}" value="${v.title}" placeholder="e.g. Farm Tour 2024">
-                    </div>
-                    <div>
-                        <label>Category</label>
-                        <select id="vCategory_${i}">
-                            ${videoCategories.map(c => `<option value="${c}" ${v.category === c ? 'selected' : ''}>${c}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="full-width">
-                        <label>MP4 Video URL <span style="color:#718096;font-weight:400;">(direct link to .mp4 file)</span></label>
-                        <input type="url" id="vSrc_${i}" value="${v.src}" placeholder="https://example.com/video.mp4">
-                    </div>
-                    <div class="full-width">
-                        <label>Thumbnail URL <span style="color:#718096;font-weight:400;">(optional preview image)</span></label>
-                        <input type="url" id="vThumb_${i}" value="${v.thumbnail}" placeholder="https://example.com/thumb.jpg">
-                    </div>
-                    <div class="full-width">
-                        <label>Description</label>
-                        <textarea id="vDesc_${i}" rows="2">${v.description}</textarea>
-                    </div>
-                </div>
-                <div class="video-item-actions" style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;">
-                    <span class="video-status ${v.src ? 'has-video' : 'no-video'}">
-                        ${v.src ? '✓ Video Set' : '⚠ No Video'}
-                    </span>
-                    ${v.src ? `<a href="${v.src}" target="_blank" class="btn btn-ghost btn-sm">Preview</a>` : ''}
-                </div>
-            </div>
-        `).join('');
-    }
+function updateEmail() {
+    var newE = gv('s-newEmail');
+    if (!newE || !newE.includes('@') || !newE.includes('.')) { toast('Please enter a valid email address', 'err'); return; }
+    localStorage.setItem('cfm_admin_email', newE);
+    sv('s-curEmail', newE);
+    $id('adminEmail').textContent = newE;
+    sv('s-newEmail','');
+    toast('Email updated! Use the new email to log in next time.');
+}
 
-    function saveVideos() {
-        const videos = getVideos().map((v, i) => ({
-            id: v.id,
-            title: document.getElementById(`vTitle_${i}`)?.value || v.title,
-            description: document.getElementById(`vDesc_${i}`)?.value || v.description,
-            category: document.getElementById(`vCategory_${i}`)?.value || v.category,
-            src: document.getElementById(`vSrc_${i}`)?.value || v.src,
-            thumbnail: document.getElementById(`vThumb_${i}`)?.value || v.thumbnail,
-        }));
-        localStorage.setItem('farmVideos', JSON.stringify(videos));
-        const withVideo = videos.filter(v => v.src).length;
-        document.getElementById('statVideos').textContent = withVideo;
-        renderVideoEditor();
-        showToast(`Videos saved! ${withVideo}/3 have video URLs.`);
-    }
+function updatePassword() {
+    var cur  = $id('s-curPw').value;
+    var nw   = $id('s-newPw').value;
+    var conf = $id('s-confPw').value;
+    var stored = localStorage.getItem('cfm_admin_pass') || DEF_PASS;
+    if (!cur)            { toast('Please enter your current password', 'err'); return; }
+    if (cur !== stored)  { toast('Current password is incorrect', 'err'); return; }
+    if (nw.length < 8)   { toast('New password must be at least 8 characters', 'err'); return; }
+    if (nw !== conf)     { toast('New passwords do not match', 'err'); return; }
+    localStorage.setItem('cfm_admin_pass', nw);
+    sv('s-curPw',''); sv('s-newPw',''); sv('s-confPw','');
+    toast('Password updated! Use the new password next time you log in.');
+}
 
-    function resetVideos() {
-        if (!confirm('Reset videos to defaults?')) return;
-        localStorage.removeItem('farmVideos');
-        renderVideoEditor();
-        showToast('Videos reset to defaults');
-    }
+function nukAllData() {
+    if (!confirm('⚠️ Delete ALL data?\n\nThis will clear:\n• All quote requests\n• All orders\n• All products\n• All videos\n• All website content\n\nThis CANNOT be undone.')) return;
+    ['farmQuotes','farmOrders','farmProducts','farmVideos','websiteContent'].forEach(function(k){
+        localStorage.removeItem(k);
+    });
+    renderDashboard();
+    toast('All data cleared.', 'warn');
+}
 
-    // ===== PRODUCTS =====
-    function getProducts() {
-        return JSON.parse(localStorage.getItem('farmProducts') || 'null') || [
-            { id: 1, name: 'Broiler Day-Old Chicks', description: 'Fast-growing, high-quality broiler chicks.', price: 3500, image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=80' },
-            { id: 2, name: 'Layer Day-Old Chicks', description: 'Premium layer breeds with excellent egg production.', price: 4200, image: 'https://images.unsplash.com/photo-1612170153139-6f881ff067e0?w=400&q=80' },
-            { id: 3, name: 'Kuroiler Chicks', description: 'Dual-purpose breed for meat and eggs.', price: 5000, image: 'https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=400&q=80' }
-        ];
-    }
-    function renderProductsList() {
-        const products = getProducts();
-        const container = document.getElementById('productsList');
-        if (!products.length) { container.innerHTML = '<p style="text-align:center;color:#718096;padding:2rem;">No products. Add one above.</p>'; return; }
-        container.innerHTML = `<table><thead><tr><th>Name</th><th>Description</th><th>Price</th><th>Actions</th></tr></thead><tbody>` +
-            products.map(p => `<tr>
-                <td><strong>${p.name}</strong></td>
-                <td>${p.description}</td>
-                <td>UGX ${p.price.toLocaleString()}</td>
-                <td>
-                    <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Delete</button>
-                </td>
-            </tr>`).join('') + '</tbody></table>';
-        document.getElementById('statProducts').textContent = products.length;
-    }
-    function editProduct(id) {
-        const products = getProducts();
-        const p = products.find(x => x.id === id);
-        if (!p) return;
-        document.getElementById('editProductId').value = id;
-        document.getElementById('pName').value = p.name;
-        document.getElementById('pDesc').value = p.description;
-        document.getElementById('pPrice').value = p.price;
-        document.getElementById('pImage').value = p.image;
-        openModal('addProductModal');
-    }
-    function saveProduct() {
-        const products = getProducts();
-        const editId = parseInt(document.getElementById('editProductId').value);
-        const newP = {
-            id: editId || Date.now(),
-            name: document.getElementById('pName').value,
-            description: document.getElementById('pDesc').value,
-            price: parseFloat(document.getElementById('pPrice').value),
-            image: document.getElementById('pImage').value,
-        };
-        if (editId) {
-            const idx = products.findIndex(x => x.id === editId);
-            if (idx !== -1) products[idx] = newP;
-        } else {
-            products.push(newP);
-        }
-        localStorage.setItem('farmProducts', JSON.stringify(products));
-        closeModal('addProductModal');
-        document.getElementById('editProductId').value = '';
-        renderProductsList();
-        showToast('Product saved!');
-    }
-    function deleteProduct(id) {
-        if (!confirm('Delete this product?')) return;
-        const products = getProducts().filter(p => p.id !== id);
-        localStorage.setItem('farmProducts', JSON.stringify(products));
-        renderProductsList();
-        showToast('Product deleted');
-    }
+/* ── INIT ───────────────────────────────── */
+(function init(){
+    // Set admin email in topbar
+    var email = localStorage.getItem('cfm_admin_email') || DEF_EMAIL;
+    $id('adminEmail').textContent = email;
 
-    // ===== QUOTES =====
-    function renderQuotes() {
-        const quotes = JSON.parse(localStorage.getItem('farmQuotes') || '[]');
-        const tbody = document.getElementById('quotesTable');
-        if (!quotes.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No quotes yet</td></tr>'; return; }
-        tbody.innerHTML = quotes.map(q => `<tr>
-            <td>${new Date(q.date).toLocaleDateString()}</td>
-            <td>${q.name}</td>
-            <td>${q.email}</td>
-            <td>${q.phone}</td>
-            <td>${q.product}</td>
-            <td>${q.quantity}</td>
-            <td>${q.farmType}</td>
-        </tr>`).join('');
-        document.getElementById('statQuotes').textContent = quotes.length;
-    }
-    function clearQuotes() {
-        if (!confirm('Clear all quotes?')) return;
-        localStorage.removeItem('farmQuotes');
-        renderQuotes();
-        showToast('Quotes cleared');
-    }
-
-    // ===== ORDERS =====
-    function getOrders() { return JSON.parse(localStorage.getItem('farmOrders') || '[]'); }
-    function renderOrders() {
-        const orders = getOrders();
-        const tbody = document.getElementById('ordersTable');
-        if (!orders.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#718096;">No orders yet</td></tr>'; return; }
-        tbody.innerHTML = orders.map(o => `<tr>
-            <td>${new Date(o.date).toLocaleDateString()}</td>
-            <td>${o.name}</td>
-            <td>${o.product}</td>
-            <td>${o.qty}</td>
-            <td>UGX ${parseInt(o.amount).toLocaleString()}</td>
-            <td><span class="badge ${o.status==='Delivered'?'badge-success':o.status==='Cancelled'?'badge-danger':'badge-warning'}">${o.status}</span></td>
-            <td><button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">Delete</button></td>
-        </tr>`).join('');
-        document.getElementById('statOrders').textContent = orders.length;
-    }
-    function saveOrder() {
-        const orders = getOrders();
-        orders.push({
-            id: Date.now(),
-            date: new Date().toISOString(),
-            name: document.getElementById('oName').value,
-            product: document.getElementById('oProduct').value,
-            qty: document.getElementById('oQty').value,
-            amount: document.getElementById('oAmount').value,
-            status: document.getElementById('oStatus').value,
-        });
-        localStorage.setItem('farmOrders', JSON.stringify(orders));
-        closeModal('addOrderModal');
-        renderOrders();
-        showToast('Order saved!');
-    }
-    function deleteOrder(id) {
-        if (!confirm('Delete this order?')) return;
-        const orders = getOrders().filter(o => o.id !== id);
-        localStorage.setItem('farmOrders', JSON.stringify(orders));
-        renderOrders();
-        showToast('Order deleted');
-    }
-
-    function clearAllData() {
-        ['farmQuotes','farmOrders','farmProducts','farmVideos','websiteContent'].forEach(k => localStorage.removeItem(k));
-        showToast('All data cleared');
-        loadDashboard();
-    }
-
-    // ===== DASHBOARD =====
-    function loadDashboard() {
-        const quotes = JSON.parse(localStorage.getItem('farmQuotes') || '[]');
-        const orders = JSON.parse(localStorage.getItem('farmOrders') || '[]');
-        const products = getProducts();
-        const videos = getVideos().filter(v => v.src);
-        document.getElementById('statQuotes').textContent = quotes.length;
-        document.getElementById('statOrders').textContent = orders.length;
-        document.getElementById('statProducts').textContent = products.length;
-        document.getElementById('statVideos').textContent = videos.length;
-
-        // Recent activity (latest 5 quotes)
-        const tbody = document.getElementById('recentActivity');
-        const recent = quotes.slice(-5).reverse();
-        tbody.innerHTML = recent.length ? recent.map(q => `<tr>
-            <td>${new Date(q.date).toLocaleDateString()}</td>
-            <td>${q.name}</td>
-            <td>${q.product}</td>
-            <td>${q.quantity}</td>
-            <td><button class="btn btn-ghost btn-sm">View</button></td>
-        </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#718096;">No activity yet</td></tr>';
-    }
-
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', () => {
-        const email = localStorage.getItem('
+    // Render the default (dashboard) tab
+    renderDashboard();
+})();
+</script>
+</body>
+</html>
