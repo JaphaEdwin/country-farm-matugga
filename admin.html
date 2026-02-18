@@ -368,7 +368,7 @@ if (localStorage.getItem('cfm_admin_auth') !== 'true') {
         <div class="topbar-r">
             <div class="admin-pill">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span id="adminEmail">admin@cfm.com</span>
+                <span id="adminEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="640500090d0a240702094a070b09">[email&#160;protected]</a></span>
             </div>
             <button class="btn btn-primary btn-sm" onclick="saveCurrentSection()">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -530,7 +530,9 @@ if (localStorage.getItem('cfm_admin_auth') !== 'true') {
                     </div>
                 </div>
                 <div style="background:#eff8f0;border-radius:8px;padding:.9rem 1rem;margin-bottom:1.2rem;font-size:.83rem;color:var(--green);">
-                    <strong>💡 How to add videos:</strong> Upload your .mp4 to Google Drive, Dropbox, or your web server. Set sharing to "Anyone with the link", then paste the direct file URL below. Thumbnail image URL is optional.
+                    <strong>💡 Two ways to add videos:</strong><br>
+                    <strong>1. Local file</strong> — pick a video from your device (works while this browser tab is open).<br>
+                    <strong>2. Online URL</strong> — upload to Google Drive/Dropbox, set sharing to "Anyone with the link", paste the direct .mp4 link.
                 </div>
                 <div id="vid-list"></div>
                 <button class="btn btn-primary" style="margin-top:.8rem;" onclick="saveVideos()">Save All Videos</button>
@@ -648,7 +650,7 @@ if (localStorage.getItem('cfm_admin_auth') !== 'true') {
 </div>
 
 <!-- ══ JAVASCRIPT ════════════════════════════════════════════════ -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 'use strict';
 
 /* ── CONSTANTS ──────────────────────────── */
@@ -1039,6 +1041,9 @@ function deleteProduct(id) {
 }
 
 /* ── VIDEOS ─────────────────────────────── */
+/* blob URLs created from local file picks — keyed by slot index, session-only */
+var _blobs = {};
+
 function renderVideos() {
     var videos = getVideos();
     $id('vid-list').innerHTML = videos.map(function(v, i){
@@ -1046,41 +1051,113 @@ function renderVideos() {
             return '<option value="'+esc(c)+'"'+(v.category===c?' selected':'')+'>'+esc(c)+'</option>';
         }).join('');
 
+        var blob       = _blobs[i];
+        var hasVideo   = !!(blob || v.src);
+        var urlDisabled = blob ? ' disabled style="opacity:.45;pointer-events:none;"' : '';
+        var fileLabel  = blob
+            ? '✓ '+esc(blob.name)+' ('+( blob.size/1024/1024).toFixed(1)+' MB)'
+            : (v.blobName ? '⚠ Re-select: '+esc(v.blobName) : 'No file chosen');
+
         return '<div class="vslot">'
             + '<div class="vnum">'+(i+1)+'</div>'
-            + '<div>'
+            + '<div style="min-width:0;">'
                 + '<div class="vgrid">'
+                    /* title + category */
                     + '<div class="fg"><label>Video Title *</label><input class="fc" type="text" id="vt'+i+'" value="'+esc(v.title)+'" placeholder="e.g. Farm Tour 2024"></div>'
                     + '<div class="fg"><label>Category</label><select class="fc" id="vc'+i+'">'+catOptions+'</select></div>'
-                    + '<div class="fg full"><label>Video URL <span class="hint">— direct link to .mp4 file</span></label><input class="fc" type="url" id="vs'+i+'" value="'+esc(v.src)+'" placeholder="https://example.com/video.mp4"></div>'
+
+                    /* local upload */
+                    + '<div class="fg full">'
+                        + '<label>Upload from your device <span class="hint">— .mp4, .webm, .mov (works while browser is open)</span></label>'
+                        + '<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:.25rem;">'
+                            + '<label style="cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .8rem;background:#f7fafc;border:1px solid var(--border);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--mid);">'
+                                + '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
+                                + ' Choose File'
+                                + '<input type="file" accept="video/mp4,video/webm,video/quicktime,video/*" style="display:none;" onchange="pickVideo('+i+',this)">'
+                            + '</label>'
+                            + '<span id="vfn'+i+'" style="font-size:.82rem;color:var(--light);">'+fileLabel+'</span>'
+                            + (blob ? '<button class="btn btn-danger btn-sm" onclick="clearBlob('+i+')">✕ Remove</button>' : '')
+                        + '</div>'
+                    + '</div>'
+
+                    /* url fallback */
+                    + '<div class="fg full">'
+                        + '<label>— or paste an online URL <span class="hint">Google Drive / Dropbox direct .mp4 link</span></label>'
+                        + '<input class="fc" type="url" id="vs'+i+'" value="'+esc(v.src)+'" placeholder="https://example.com/video.mp4"'+urlDisabled+'>'
+                    + '</div>'
+
+                    /* thumbnail + description */
                     + '<div class="fg full"><label>Thumbnail URL <span class="hint">— optional preview image</span></label><input class="fc" type="url" id="vh'+i+'" value="'+esc(v.thumbnail)+'" placeholder="https://example.com/thumb.jpg"></div>'
                     + '<div class="fg full"><label>Description</label><textarea class="fc" id="vd'+i+'" rows="2">'+esc(v.description)+'</textarea></div>'
                 + '</div>'
-                + '<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;">'
-                    + '<span class="vstatus '+(v.src?'vset':'vnone')+'">'+(v.src?'✓ Video Set':'⚠ No Video URL')+'</span>'
-                    + (v.src?'<a href="'+esc(v.src)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Preview ↗</a>':'')
+
+                /* status row */
+                + '<div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:.4rem;">'
+                    + '<span class="vstatus '+(hasVideo?'vset':'vnone')+'">'+(hasVideo ? (blob?'✓ Local file ready':'✓ URL set') : '⚠ No video')+'</span>'
+                    + (v.src && !blob ? '<a href="'+esc(v.src)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Preview URL ↗</a>' : '')
+                    + (blob ? '<button class="btn btn-ghost btn-sm" onclick="previewBlob('+i+')">▶ Preview</button>' : '')
                 + '</div>'
             + '</div>'
             + '</div>';
     }).join('');
 }
 
+function pickVideo(i, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    /* free previous blob if any */
+    if (_blobs[i]) URL.revokeObjectURL(_blobs[i].url);
+    _blobs[i] = { url: URL.createObjectURL(file), name: file.name, size: file.size };
+    /* disable the URL field so the two sources don't conflict */
+    var urlInput = $id('vs'+i);
+    if (urlInput) { urlInput.value = ''; urlInput.disabled = true; urlInput.style.opacity = '.45'; }
+    /* update filename label */
+    var fn = $id('vfn'+i);
+    if (fn) fn.textContent = '✓ '+file.name+' ('+(file.size/1024/1024).toFixed(1)+' MB)';
+    toast('Video loaded — click Save Videos to apply.', 'ok');
+}
+
+function clearBlob(i) {
+    if (_blobs[i]) { URL.revokeObjectURL(_blobs[i].url); delete _blobs[i]; }
+    /* restore the URL input */
+    var urlInput = $id('vs'+i);
+    if (urlInput) { urlInput.disabled = false; urlInput.style.opacity = ''; }
+    /* wipe blobName from storage too */
+    var vids = getVideos();
+    if (vids[i]) { vids[i].blobName = ''; localStorage.setItem('farmVideos', JSON.stringify(vids)); }
+    renderVideos();
+    toast('Local file removed', 'warn');
+}
+
+function previewBlob(i) {
+    var b = _blobs[i];
+    if (!b) return;
+    var w = window.open('');
+    w.document.write('<video controls autoplay style="max-width:100%;max-height:100vh;" src="'+b.url+'"></video>');
+}
+
 function saveVideos() {
-    var videos = getVideos().map(function(v, i){
+    var stored = getVideos();
+    var toSave = stored.map(function(v, i){
+        var blob = _blobs[i];
         return {
             id:          v.id,
-            title:       ($id('vt'+i) ? $id('vt'+i).value.trim() : '') || v.title,
-            description: ($id('vd'+i) ? $id('vd'+i).value.trim() : '') || v.description,
-            category:    ($id('vc'+i) ? $id('vc'+i).value       : '') || v.category,
-            src:         ($id('vs'+i) ? $id('vs'+i).value.trim() : '') || '',
-            thumbnail:   ($id('vh'+i) ? $id('vh'+i).value.trim() : '') || ''
+            title:       ($id('vt'+i)||{value:v.title}).value.trim() || v.title,
+            description: ($id('vd'+i)||{value:v.description}).value.trim() || v.description,
+            category:    ($id('vc'+i)||{value:v.category}).value || v.category,
+            /* if local blob chosen, keep src empty; store filename so UI can warn on reload */
+            src:         blob ? '' : (($id('vs'+i)||{value:''}).value.trim()),
+            blobName:    blob ? blob.name : '',
+            thumbnail:   ($id('vh'+i)||{value:''}).value.trim()
         };
     });
-    localStorage.setItem('farmVideos', JSON.stringify(videos));
-    var live = videos.filter(function(v){ return v.src; }).length;
+    localStorage.setItem('farmVideos', JSON.stringify(toSave));
+
+    /* count as live: URL set OR in-memory blob */
+    var live = toSave.filter(function(v,i){ return v.src || _blobs[i]; }).length;
     $id('st-videos').textContent = live;
-    renderVideos(); // re-render to update status badges
-    toast('✅ Videos saved! ' + live + '/3 video' + (live!==1?'s':'') + ' live on website.');
+    renderVideos();
+    toast('✅ Videos saved! '+live+'/3 video'+(live!==1?'s':'')+' active.');
 }
 
 function resetVideos() {
@@ -1133,13 +1210,4 @@ function nukAllData() {
 
 /* ── INIT ───────────────────────────────── */
 (function init(){
-    // Set admin email in topbar
-    var email = localStorage.getItem('cfm_admin_email') || DEF_EMAIL;
-    $id('adminEmail').textContent = email;
-
-    // Render the default (dashboard) tab
-    renderDashboard();
-})();
-</script>
-</body>
-</html>
+    // Set admin ema
