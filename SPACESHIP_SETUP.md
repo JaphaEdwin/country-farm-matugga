@@ -1,21 +1,21 @@
-# Hostinger Cloud Sync Setup Guide
+# Spaceship Cloud Sync Setup Guide
 
-This guide will help you set up cloud storage on Hostinger so that all changes made in the admin panel are saved to the server and visible to all website visitors.
+This guide will help you set up cloud storage on Spaceship.com so that all changes made in the admin panel are saved to the server and visible to all website visitors.
 
 ## How It Works
 
 Your website uses a simple PHP backend to store data:
 - **Admin makes changes** → Data saved to server as JSON files
 - **Visitors view site** → Data loaded from server
-- **No external services needed** → Everything runs on your Hostinger hosting
+- **No external services needed** → Everything runs on your Spaceship hosting
 
 ## Quick Start (10 minutes)
 
-### Step 1: Upload Files to Hostinger
+### Step 1: Upload Files to Spaceship
 
-1. Log in to your [Hostinger control panel](https://hpanel.hostinger.com/)
-2. Go to **Files** → **File Manager**
-3. Navigate to your website folder (usually `public_html`)
+1. Log in to your [Spaceship control panel](https://www.spaceship.com/)
+2. Go to **Hosting** → **File Manager**
+3. Navigate to your website folder (usually `public_html` or `htdocs`)
 4. Upload ALL your website files including the `api` folder
 
 Your folder structure should look like:
@@ -24,7 +24,7 @@ public_html/
 ├── index.html
 ├── admin.html
 ├── admin-login.html
-├── firebase-sync.js
+├── cloud-sync.js
 ├── Logo.png
 └── api/
     ├── config.php
@@ -49,7 +49,7 @@ public_html/
 
 ### Step 3: Update JavaScript Config
 
-1. Open `firebase-sync.js` in File Manager
+1. Open `cloud-sync.js` in File Manager
 2. Find these lines near the top:
    ```javascript
    const API_SECRET_KEY = 'change-this-to-a-random-string-123';
@@ -112,7 +112,7 @@ public_html/
 
 After making changes in admin:
 
-1. In Hostinger File Manager, go to `api/data/`
+1. In Spaceship File Manager, go to `api/data/`
 2. You should see JSON files like:
    - `farmProducts.json`
    - `websiteContent.json`
@@ -125,7 +125,7 @@ After making changes in admin:
 **Cause:** API keys don't match or API isn't accessible
 
 **Fix:**
-1. Make sure `API_SECRET_KEY` in `firebase-sync.js` matches `config.php`
+1. Make sure `API_SECRET_KEY` in `cloud-sync.js` matches `config.php`
 2. Check that `api/data.php` is accessible (visit it in browser)
 3. Check browser console (F12) for error messages
 
@@ -135,7 +135,7 @@ After making changes in admin:
 
 **Fix:**
 1. Set `api/data` folder permissions to 755 or 775
-2. If still failing, contact Hostinger support about file permissions
+2. If still failing, contact Spaceship support about file permissions
 
 ### Changes not appearing for visitors
 
@@ -143,7 +143,7 @@ After making changes in admin:
 
 **Fix:**
 1. Clear browser cache (Ctrl+Shift+R)
-2. Check that `index.html` has the `<script src="firebase-sync.js">` line
+2. Check that `index.html` has the `<script src="cloud-sync.js">` line
 3. Verify JSON files exist in `api/data/`
 
 ### API returns 500 error
@@ -188,16 +188,16 @@ After making changes in admin:
 
 ### For Images and Videos
 
-Since Hostinger has limited storage, use external hosting:
+Since shared hosting has limited storage, use external hosting for media:
 
-- **Images**: [ImgBB](https://imgbb.com/), [Cloudinary](https://cloudinary.com/), or Hostinger's file manager
+- **Images**: [ImgBB](https://imgbb.com/), [Cloudinary](https://cloudinary.com/), or Spaceship's file manager
 - **Videos**: YouTube, Google Drive (with sharing enabled), or Vimeo
 
 Then paste the URL in the admin panel.
 
 ## File Size Limits
 
-Hostinger shared hosting typically allows:
+Spaceship shared hosting typically allows:
 - **Max upload**: 128MB per file
 - **Max POST size**: 128MB
 - **Storage**: Depends on your plan
@@ -208,4 +208,4 @@ For a farm website, you'll have plenty of space for text data.
 
 1. Check browser console for errors (F12 → Console)
 2. Check `api/data.php` directly in browser for API status
-3. Contact Hostinger support for hosting-specific issues
+3. Contact Spaceship support for hosting-specific issues
