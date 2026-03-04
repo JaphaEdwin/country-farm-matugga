@@ -1,0 +1,31 @@
+# Country Farm Matugga API - .htaccess
+# Security settings for the API folder
+
+# Deny direct access to data files
+<FilesMatch "\.json$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Deny access to config file
+<FilesMatch "config\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Allow PHP files
+<FilesMatch "^data\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Set PHP settings for API
+<IfModule mod_php.c>
+    php_flag display_errors off
+    php_value max_execution_time 30
+    php_value memory_limit 64M
+    php_value post_max_size 10M
+</IfModule>
